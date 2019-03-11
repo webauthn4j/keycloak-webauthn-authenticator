@@ -39,5 +39,9 @@
             <artifactId>keycloak-model-jpa</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.webauthn4j</groupId>
+            <artifactId>webauthn4j-core</artifactId>
+        </dependency>
     </dependencies>
 </project>
