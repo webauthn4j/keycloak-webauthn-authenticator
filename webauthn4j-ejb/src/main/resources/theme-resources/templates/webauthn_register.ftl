@@ -11,26 +11,16 @@
         <input type="hidden" id="clientDataJSON" name="clientDataJSON"/>
         <input type="hidden" id="attestationObject" name="attestationObject"/>
     </form>
+    <script type="text/javascript" src="${url.resourcesPath}/node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="${url.resourcesPath}/base64url.js"></script>
     <script type="text/javascript">
-       function base64urlFromByteArray(array) {
-           return btoa(
-                     new Uint8Array(array)
-                     .reduce((data, byte) => data + String.fromCharCode(byte), '')
-                  ).replace(/\+/g, "-").replace(/\//g, "_").replace(/\=+$/,'');
-       }
-
-       function byteArrayFromBase64url(str) {
-            var str = (str + '===').slice(0, str.length + (str.length % 4))
-            .replace(/-/g, '+').replace(/_/g, '/');
-            return Uint8Array.from(atob(str), c => c.charCodeAt(0));
-       }
-
+        
         var challenge = "${challenge}";
         var userid = "${userid}";
         var username = "${username}";
         var origin = "${origin}"
         var publicKey = {
-            challenge: byteArrayFromBase64url(challenge),
+            challenge: base64url.decode(challenge),
             rp: {
                 name:  "Keycloak"
             },
@@ -61,9 +51,9 @@
                 var clientDataJSON = result.response.clientDataJSON;
                 var attestationObject = result.response.attestationObject;
 
-                document.getElementById("clientDataJSON").value = base64urlFromByteArray(clientDataJSON);
-                document.getElementById("attestationObject").value = base64urlFromByteArray(attestationObject);
-                document.getElementById("register").submit();
+                $("#clientDataJSON").val(base64url.encode(clientDataJSON));
+                $("#attestationObject").val(base64url.encode(attestationObject));
+                $("#register").submit();
 
             })
             .catch(function(err) {
