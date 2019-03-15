@@ -1,5 +1,7 @@
 # Keycloak WebAuthn Authenticator
 
+[![Build Status](https://travis-ci.org/webauthn4j/keycloak-webauthn-authenticator.svg?branch=master)](https://travis-ci.org/webauthn4j/keycloak-webauthn-authenticator)
+
 [Web Authentication](https://www.w3.org/TR/webauthn/)(WebAuthn) sample plugin for [Keycloak](https://www.keycloak.org) , implements with [webauthn4j](https://github.com/webauthn4j/webauthn4j).
 
 ## Install
@@ -51,7 +53,7 @@
 
 ## TODO
 
-- [ ] Unit Test
+- [x] Unit Test
 - [ ] CI Integration
 
 _TBD_
