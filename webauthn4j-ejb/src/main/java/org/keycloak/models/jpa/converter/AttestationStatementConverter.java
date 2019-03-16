@@ -1,7 +1,7 @@
 package org.keycloak.models.jpa.converter;
 
 import com.webauthn4j.converter.util.JsonConverter;
-import com.webauthn4j.response.attestation.statement.AttestationStatement;
+import com.webauthn4j.data.attestation.statement.AttestationStatement;
 
 import javax.persistence.AttributeConverter;
 

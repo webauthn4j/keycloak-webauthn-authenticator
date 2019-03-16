@@ -1,11 +1,11 @@
 package org.keycloak.endpoint;
 
 import com.webauthn4j.converter.util.JsonConverter;
-import com.webauthn4j.request.AuthenticatorSelectionCriteria;
-import com.webauthn4j.request.PublicKeyCredentialCreationOptions;
-import com.webauthn4j.request.PublicKeyCredentialParameters;
-import com.webauthn4j.request.PublicKeyCredentialType;
-import com.webauthn4j.response.attestation.statement.COSEAlgorithmIdentifier;
+import com.webauthn4j.data.AuthenticatorSelectionCriteria;
+import com.webauthn4j.data.PublicKeyCredentialCreationOptions;
+import com.webauthn4j.data.PublicKeyCredentialParameters;
+import com.webauthn4j.data.PublicKeyCredentialType;
+import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.services.resource.RealmResourceProvider;
 

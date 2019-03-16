@@ -1,7 +1,7 @@
 package org.keycloak.models.jpa.converter;
 
 import com.webauthn4j.converter.util.JsonConverter;
-import com.webauthn4j.response.attestation.authenticator.CredentialPublicKey;
+import com.webauthn4j.data.attestation.authenticator.CredentialPublicKey;
 
 import javax.persistence.AttributeConverter;
 
