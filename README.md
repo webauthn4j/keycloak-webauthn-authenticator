@@ -28,7 +28,7 @@
 |                                        | Profile Validation         | REQUIRED    |
 |                                        | Password Validation        | REQUIRED    |
 |                                        | Recaptcha                  | DISABLED    |
-| WebAutn Register                       |                            | REQUIRED    |
+| WebAuthn Register                      |                            | REQUIRED    |
 
 ### Browser Flow (2 Factor Authentication)
 
@@ -40,7 +40,7 @@
 | Copy of Browser Flow         |                        | ALTERNATIVE |
 |                              | Username Password Form | REQUIRED    |
 |                              | OTP Form               | OPTIONAL    |
-|                              | WebAutn Authenticator  | REQUIRED    |
+|                              | WebAuthn Authenticator | REQUIRED    |
 
 ### Browser Flow (Use `Resident Key`)
 
@@ -49,7 +49,7 @@
 | Cookie                       |     | ALTERNATIVE |
 | Kerberos                     |     | DISABLED    |
 | Identity Provider Redirector |     | ALTERNATIVE |
-| WebAutn Authenticator        |     | REQUIRED    |
+| WebAuthn Authenticator       |     | REQUIRED    |
 
 ## TODO
 
