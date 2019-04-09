@@ -44,4 +44,14 @@
             <artifactId>webauthn4j-core</artifactId>
         </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>ojo-snapshots</id>
+            <name>OJO Snapshots</name>
+            <url>https://oss.jfrog.org/artifactory/libs-snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

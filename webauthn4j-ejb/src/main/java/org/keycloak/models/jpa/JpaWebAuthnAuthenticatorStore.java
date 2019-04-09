@@ -1,6 +1,6 @@
 package org.keycloak.models.jpa;
 
-import com.webauthn4j.response.attestation.authenticator.AttestedCredentialData;
+import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData;
 import org.keycloak.connections.jpa.JpaConnectionProvider;
 import org.keycloak.credential.WebAuthnCredentialModel;
 import org.keycloak.models.KeycloakSession;

@@ -1,9 +1,9 @@
 package org.keycloak.credential;
 
 
-import com.webauthn4j.response.WebAuthnAuthenticationContext;
-import com.webauthn4j.response.attestation.authenticator.AttestedCredentialData;
-import com.webauthn4j.response.attestation.statement.AttestationStatement;
+import com.webauthn4j.data.WebAuthnAuthenticationContext;
+import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData;
+import com.webauthn4j.data.attestation.statement.AttestationStatement;
 
 public class WebAuthnCredentialModel implements CredentialInput {
 

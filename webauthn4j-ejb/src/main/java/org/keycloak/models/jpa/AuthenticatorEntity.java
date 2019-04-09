@@ -1,8 +1,8 @@
 package org.keycloak.models.jpa;
 
-import com.webauthn4j.response.attestation.authenticator.AAGUID;
-import com.webauthn4j.response.attestation.authenticator.CredentialPublicKey;
-import com.webauthn4j.response.attestation.statement.AttestationStatement;
+import com.webauthn4j.data.attestation.authenticator.AAGUID;
+import com.webauthn4j.data.attestation.authenticator.CredentialPublicKey;
+import com.webauthn4j.data.attestation.statement.AttestationStatement;
 import org.keycloak.models.jpa.entities.UserEntity;
 import org.keycloak.models.jpa.converter.AAGUIDConverter;
 import org.keycloak.models.jpa.converter.AttestationStatementConverter;
