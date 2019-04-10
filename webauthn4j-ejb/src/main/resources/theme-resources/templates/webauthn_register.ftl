@@ -10,22 +10,23 @@
         </div>
         <input type="hidden" id="clientDataJSON" name="clientDataJSON"/>
         <input type="hidden" id="attestationObject" name="attestationObject"/>
+        <input type="hidden" id="publicKeyCredentialId" name="publicKeyCredentialId"/>
+        <input type="hidden" id="error" name="error"/>
     </form>
     <script type="text/javascript" src="${url.resourcesPath}/node_modules/jquery/dist/jquery.min.js"></script>
     <script type="text/javascript" src="${url.resourcesPath}/base64url.js"></script>
     <script type="text/javascript">
-        
         var challenge = "${challenge}";
         var userid = "${userid}";
         var username = "${username}";
         var origin = "${origin}"
         var publicKey = {
-            challenge: base64url.decode(challenge),
+            challenge: base64url.decode(challenge, { loose: true }),
             rp: {
                 name:  "Keycloak"
             },
             user: {
-                id:  Uint8Array.from(userid, c => c.charCodeAt(0)),
+                id:  base64url.decode(userid, { loose: true }),
                 name: username,
                 displayName: username
             },
@@ -50,14 +51,19 @@
                 console.log(result.response);
                 var clientDataJSON = result.response.clientDataJSON;
                 var attestationObject = result.response.attestationObject;
+                var publicKeyCredentialId = result.rawId;
 
-                $("#clientDataJSON").val(base64url.encode(clientDataJSON));
-                $("#attestationObject").val(base64url.encode(attestationObject));
+                $("#clientDataJSON").val(base64url.encode(new Uint8Array(clientDataJSON), { pad: false }));
+                $("#attestationObject").val(base64url.encode(new Uint8Array(attestationObject), { pad: false }));
+                $("#publicKeyCredentialId").val(base64url.encode(new Uint8Array(publicKeyCredentialId), { pad: false }));
                 $("#register").submit();
 
             })
             .catch(function(err) {
                 console.log(err);
+                $("#error").val(err);
+                $("#register").submit();
+
             });
 
 
