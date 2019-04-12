@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-
 package org.keycloak.authenticator;
 
-import com.webauthn4j.response.WebAuthnRegistrationContext;
-import com.webauthn4j.response.client.Origin;
-import com.webauthn4j.response.client.challenge.Challenge;
-import com.webauthn4j.response.client.challenge.DefaultChallenge;
+import com.webauthn4j.data.WebAuthnRegistrationContext;
+import com.webauthn4j.data.client.Origin;
+import com.webauthn4j.data.client.challenge.Challenge;
+import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidationResponse;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
@@ -40,8 +39,6 @@ import org.keycloak.models.UserModel;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 public class RegisterAuthenticator implements Authenticator {
     private static final Logger logger = Logger.getLogger(RegisterAuthenticator.class);
@@ -54,17 +51,6 @@ public class RegisterAuthenticator implements Authenticator {
         this.session = session;
     }
 
-    private Map<String, String> generateParameter(AuthenticationFlowContext context){
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("userid",context.getUser().getId());
-        parameters.put("username", context.getUser().getUsername());
-        Challenge challenge = new DefaultChallenge();
-        String challengeValue = Base64Url.encode(challenge.getValue());
-        parameters.put("challenge", challengeValue);
-        String origin = context.getUriInfo().getBaseUri().getHost();
-        context.getAuthenticationSession().setAuthNote(AUTH_NOTE, challengeValue);
-        return parameters;
-    }
     @Override
     public void authenticate(AuthenticationFlowContext context) {
         String userid = context.getUser().getId();

@@ -16,7 +16,7 @@
 
 package org.keycloak.models.jpa.converter;
 
-import com.webauthn4j.response.attestation.authenticator.AAGUID;
+import com.webauthn4j.data.attestation.authenticator.AAGUID;
 
 import javax.persistence.AttributeConverter;
 

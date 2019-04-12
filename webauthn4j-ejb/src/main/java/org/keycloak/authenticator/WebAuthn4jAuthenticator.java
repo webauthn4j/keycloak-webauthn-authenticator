@@ -16,10 +16,10 @@
 
 package org.keycloak.authenticator;
 
-import com.webauthn4j.response.WebAuthnAuthenticationContext;
-import com.webauthn4j.response.client.Origin;
-import com.webauthn4j.response.client.challenge.Challenge;
-import com.webauthn4j.response.client.challenge.DefaultChallenge;
+import com.webauthn4j.data.WebAuthnAuthenticationContext;
+import com.webauthn4j.data.client.Origin;
+import com.webauthn4j.data.client.challenge.Challenge;
+import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 
 import org.jboss.logging.Logger;
@@ -72,7 +72,7 @@ public class WebAuthn4jAuthenticator implements Authenticator {
             logger.debugv("publicKeyCredentialId = {0}", publicKeyCredentialId);
             params.put("publicKeyCredentialId", publicKeyCredentialId);
         } else {
-            // in UAF Scenario
+            // in Passwordless Scenario
             params.put("publicKeyCredentialId", "");
         }
         params.forEach(form::setAttribute);
@@ -119,7 +119,7 @@ public class WebAuthn4jAuthenticator implements Authenticator {
                 }
             } else {
                 // NOP
-                // in UAF with Resident Key supported Authenticator Scenario
+                // in Passwordless with Resident Key supported Authenticator Scenario
             }
         }
         UserModel user = session.users().getUserById(userId, context.getRealm());
@@ -139,6 +139,7 @@ public class WebAuthn4jAuthenticator implements Authenticator {
         try {
             result = session.userCredentialManager().isValid(context.getRealm(), user, cred);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new AuthenticationFlowException("unknown user authenticated by the authenticator", AuthenticationFlowError.UNKNOWN_USER);
         }
         if (result) {
