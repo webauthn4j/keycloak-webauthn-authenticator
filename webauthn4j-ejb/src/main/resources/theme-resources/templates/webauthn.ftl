@@ -13,6 +13,7 @@
         <input type="hidden" id="signature" name="signature"/>
         <input type="hidden" id="credentialId" name="credentialId"/>
         <input type="hidden" id="userHandle" name="userHandle"/>
+        <input type="hidden" id="error" name="error"/>
 
         <div class="${properties.kcFormGroupClass!}">
             <input type="button" value="Authenticate" id="authenticate"/>
@@ -30,11 +31,27 @@
         var challenge = "${challenge}";
         var rpId = "${rpId}";
         var origin = "${origin}";
-        var publicKey = {
-            challenge: base64url.decode(challenge),
-            rpId: rpId,
-            timeout : 60000,
+        var publicKeyCredentialId = "${publicKeyCredentialId}";
+        var publicKey;
+        if (publicKeyCredentialId != '') {
+            publicKey = {
+                challenge: base64url.decode(challenge, { loose: true }),
+                rpId: rpId,
+                allowCredentials: [{
+                    id: base64url.decode(publicKeyCredentialId, { loose: true }),
+                    type: 'public-key',
+                    transports: ['usb', 'ble', 'nfc', 'internal'],
+                }],
+                timeout : 60000,
+            };
+        } else {
+            publicKey = {
+                challenge: base64url.decode(challenge, { loose: true }),
+                rpId: rpId,
+                timeout : 60000,
+            };
         };
+        console.log(publicKey);
 
         navigator.credentials.get({publicKey})
             .then(function(result) {
@@ -45,19 +62,21 @@
                 var authenticatorData = result.response.authenticatorData;
                 var signature = result.response.signature;
 
-                $("#clientDataJSON").val(base64url.encode(clientDataJSON));
-                $("#authenticatorData").val(base64url.encode(authenticatorData));
-                $("#signature").val(base64url.encode(signature));
+                $("#clientDataJSON").val(base64url.encode(new Uint8Array(clientDataJSON), { pad: false }));
+                $("#authenticatorData").val(base64url.encode(new Uint8Array(authenticatorData), { pad: false }));
+                $("#signature").val(base64url.encode(new Uint8Array(signature), { pad: false }));
                 $("#credentialId").val(result.id);
                 if(result.response.userHandle) {
-                    $("#userHandle").val(String.fromCharCode.apply("", new Uint8Array(result.response.userHandle)));
+                    $("#userHandle").val(base64url.encode(new Uint8Array(result.response.userHandle), { pad: false }));
                 }
-                
                 $("#webauth").submit();
 
             })
             .catch(function(err) {
                 console.log(err);
+                $("#error").val(err);
+                $("#webauth").submit();
+
             });
         }
         $("#authenticate").click(function() {

@@ -1,3 +1,19 @@
+/*
+ * Copyright 2002-2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.keycloak.authenticator;
 
 import com.webauthn4j.data.WebAuthnRegistrationContext;
@@ -7,7 +23,11 @@ import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidationResponse;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
+
+import org.jboss.logging.Logger;
 import org.keycloak.authentication.AuthenticationFlowContext;
+import org.keycloak.authentication.AuthenticationFlowError;
+import org.keycloak.authentication.AuthenticationFlowException;
 import org.keycloak.authentication.Authenticator;
 import org.keycloak.common.util.Base64Url;
 import org.keycloak.common.util.UriUtils;
@@ -19,11 +39,9 @@ import org.keycloak.models.UserModel;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
 
 public class RegisterAuthenticator implements Authenticator {
-
+    private static final Logger logger = Logger.getLogger(RegisterAuthenticator.class);
 
     private static final String AUTH_NOTE = "WEBAUTH_CHALLENGE";
 
@@ -33,17 +51,6 @@ public class RegisterAuthenticator implements Authenticator {
         this.session = session;
     }
 
-    private Map<String, String> generateParameter(AuthenticationFlowContext context){
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("userid",context.getUser().getId());
-        parameters.put("username", context.getUser().getUsername());
-        Challenge challenge = new DefaultChallenge();
-        String challengeValue = Base64Url.encode(challenge.getValue());
-        parameters.put("challenge", challengeValue);
-        String origin = context.getUriInfo().getBaseUri().getHost();
-        context.getAuthenticationSession().setAuthNote(AUTH_NOTE, challengeValue);
-        return parameters;
-    }
     @Override
     public void authenticate(AuthenticationFlowContext context) {
         String userid = context.getUser().getId();
@@ -66,10 +73,20 @@ public class RegisterAuthenticator implements Authenticator {
     public void action(AuthenticationFlowContext context) {
 
         MultivaluedMap<String, String> params = context.getHttpRequest().getDecodedFormParameters();
+
+        // receive error from navigator.credentials.create()
+        String error = params.getFirst("error");
+        if (error != null && !error.isEmpty()) {
+            throw new AuthenticationFlowException("exception raised from navigator.credentials.create() : " + error, AuthenticationFlowError.INVALID_CREDENTIALS);
+        }
+
         String baseUrl = UriUtils.getOrigin(context.getUriInfo().getBaseUri());
         String rpId = context.getUriInfo().getBaseUri().getHost();
         byte[] clientDataJSON = Base64.getUrlDecoder().decode(params.getFirst("clientDataJSON"));
         byte[] attestationObject = Base64.getUrlDecoder().decode(params.getFirst("attestationObject"));
+        String publicKeyCredentialId = params.getFirst("publicKeyCredentialId");
+        context.getUser().setSingleAttribute("PUBLIC_KEY_CREDENTIAL_ID", publicKeyCredentialId);
+        logger.debugv("publicKeyCredentialId = {0}", context.getUser().getAttribute("PUBLIC_KEY_CREDENTIAL_ID").get(0));
 
         Origin origin = new Origin(baseUrl);
         Challenge challenge = new DefaultChallenge(context.getAuthenticationSession().getAuthNote(AUTH_NOTE));
