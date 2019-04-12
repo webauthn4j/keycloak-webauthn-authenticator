@@ -31,8 +31,6 @@ We've confirmed that this demo had worked well under the following environments:
 
 ## Install
 
-Please checkout the branch 'demo-completed'.
-
 - build
 
   - `$ mvn install`
@@ -55,7 +53,7 @@ Please checkout the branch 'demo-completed'.
 |                                        | Profile Validation         | REQUIRED    |
 |                                        | Password Validation        | REQUIRED    |
 |                                        | Recaptcha                  | DISABLED    |
-| WebAutn Register                       |                            | REQUIRED    |
+| WebAuthn Register                      |                            | REQUIRED    |
 
 ### Browser Flow (2 Factor Authentication)
 
@@ -67,7 +65,7 @@ Please checkout the branch 'demo-completed'.
 | Copy of Browser Flow         |                        | ALTERNATIVE |
 |                              | Username Password Form | REQUIRED    |
 |                              | OTP Form               | OPTIONAL    |
-|                              | WebAutn Authenticator  | REQUIRED    |
+|                              | WebAuthn Authenticator | REQUIRED    |
 
 ### Browser Flow (Use `Resident Key`)
 
@@ -76,7 +74,7 @@ Please checkout the branch 'demo-completed'.
 | Cookie                       |     | ALTERNATIVE |
 | Kerberos                     |     | DISABLED    |
 | Identity Provider Redirector |     | ALTERNATIVE |
-| WebAutn Authenticator        |     | REQUIRED    |
+| WebAuthn Authenticator       |     | REQUIRED    |
 
 ## Open Issue
 
