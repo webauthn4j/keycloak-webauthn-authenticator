@@ -16,6 +16,11 @@ We've confirmed that this demo had worked well under the following environments:
   - Authenticator : Yubico Security Key
   - Server(RP) : keycloak-5.0.0 on localhost
 
+  - OS : macOS OS Mojave (ver 10.14.3)
+  - Browser : Google Chrome (ver 73), Mozilla FireFox (ver 66)
+  - Authenticator : Yubico Security Key
+  - Server(RP) : keycloak-5.0.0 on localhost
+
 - 2 Factor Authentication with Resident Key supported Authenticator Scenario
 
   - OS : Windows 10
