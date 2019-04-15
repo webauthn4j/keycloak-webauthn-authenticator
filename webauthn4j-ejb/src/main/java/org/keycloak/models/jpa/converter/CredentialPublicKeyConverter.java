@@ -16,20 +16,23 @@
 
 package org.keycloak.models.jpa.converter;
 
+import com.webauthn4j.converter.util.CborConverter;
 import com.webauthn4j.data.attestation.authenticator.CredentialPublicKey;
+import com.webauthn4j.util.Base64UrlUtil;
 
 import javax.persistence.AttributeConverter;
 
 public class CredentialPublicKeyConverter implements AttributeConverter<CredentialPublicKey, String> {
-    JsonConverter converter = new JsonConverter();
+
+    private CborConverter converter = new CborConverter(); //TODO: Inject by CDI to make it singleton
 
     @Override
     public String convertToDatabaseColumn(CredentialPublicKey credentialPublicKey) {
-        return converter.writeValueAsString(credentialPublicKey);
+        return Base64UrlUtil.encodeToString(converter.writeValueAsBytes(credentialPublicKey));
     }
 
     @Override
     public CredentialPublicKey convertToEntityAttribute(String s) {
-        return converter.readValue(s, CredentialPublicKey.class);
+        return converter.readValue(Base64UrlUtil.decode(s), CredentialPublicKey.class);
     }
 }

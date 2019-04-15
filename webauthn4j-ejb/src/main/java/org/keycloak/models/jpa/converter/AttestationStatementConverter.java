@@ -16,21 +16,23 @@
 
 package org.keycloak.models.jpa.converter;
 
+import com.webauthn4j.converter.util.CborConverter;
 import com.webauthn4j.data.attestation.statement.AttestationStatement;
+import com.webauthn4j.util.Base64UrlUtil;
 
 import javax.persistence.AttributeConverter;
 
 public class AttestationStatementConverter implements AttributeConverter<AttestationStatement, String> {
 
-    private JsonConverter converter = new JsonConverter();
+    private CborConverter converter = new CborConverter(); //TODO: Inject by CDI to make it singleton
 
     @Override
     public String convertToDatabaseColumn(AttestationStatement attribute) {
-        return converter.writeValueAsString(attribute);
+        return Base64UrlUtil.encodeToString(converter.writeValueAsBytes(attribute));
     }
 
     @Override
     public AttestationStatement convertToEntityAttribute(String dbData) {
-        return converter.readValue(dbData, AttestationStatement.class);
+        return converter.readValue(Base64UrlUtil.decode(dbData), AttestationStatement.class);
     }
 }
