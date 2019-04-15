@@ -1,6 +1,7 @@
 # Keycloak WebAuthn Authenticator
 
 [![Build Status](https://travis-ci.org/webauthn4j/keycloak-webauthn-authenticator.svg?branch=master)](https://travis-ci.org/webauthn4j/keycloak-webauthn-authenticator)
+[![license](https://img.shields.io/github/license/webauthn4j/keycloak-webauthn-authenticator.svg)](https://github.com/webauthn4j/keycloak-webauthn-authenticator/blob/master/LICENSE)
 
 [Web Authentication](https://www.w3.org/TR/webauthn/)(WebAuthn) sample plugin for [Keycloak](https://www.keycloak.org) , implements with [webauthn4j](https://github.com/webauthn4j/webauthn4j).
 
@@ -86,6 +87,8 @@ We've not yet resolved the following issues:
 
 ## TODO
 
+- [x] [credential storage : avoid creating a new table for credentials](https://github.com/webauthn4j/keycloak-webauthn-authenticator/issues/7)
+- [x] [webauthn4j 0.9.2.RELEASE support](https://github.com/webauthn4j/keycloak-webauthn-authenticator/issues/8)
 - [x] Unit Test
 - [ ] CI Integration
 
