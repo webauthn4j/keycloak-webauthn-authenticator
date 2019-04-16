@@ -39,6 +39,7 @@ import org.keycloak.services.Urls;
 import javax.ws.rs.core.MultivaluedMap;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WebAuthn4jAuthenticator implements Authenticator {
@@ -66,9 +67,16 @@ public class WebAuthn4jAuthenticator implements Authenticator {
         LoginFormsProvider form = context.form();
         Map<String, String> params = generateParameters(context.getRealm(), context.getUriInfo().getBaseUri());
         context.getAuthenticationSession().setAuthNote(AUTH_NOTE, params.get("challenge"));
-        if (context.getUser() != null) {
+        UserModel user = context.getUser();
+        if (user != null) {
+            List<String> publicKeyCredentialIds = user.getAttribute("PUBLIC_KEY_CREDENTIAL_ID");
             // in U2F Scenario
-            String publicKeyCredentialId = context.getUser().getAttribute("PUBLIC_KEY_CREDENTIAL_ID").get(0);
+            if (publicKeyCredentialIds == null || publicKeyCredentialIds.isEmpty()) {
+                throw new AuthenticationFlowException("public key credential id is not registerd.", AuthenticationFlowError.CREDENTIAL_SETUP_REQUIRED);
+            } else if (publicKeyCredentialIds.size() > 1) {
+                throw new AuthenticationFlowException("multiple public key credential ids are registerd.", AuthenticationFlowError.CREDENTIAL_SETUP_REQUIRED);
+            }
+            String publicKeyCredentialId = publicKeyCredentialIds.get(0);
             logger.debugv("publicKeyCredentialId = {0}", publicKeyCredentialId);
             params.put("publicKeyCredentialId", publicKeyCredentialId);
         } else {
