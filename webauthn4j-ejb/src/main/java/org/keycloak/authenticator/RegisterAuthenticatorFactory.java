@@ -39,7 +39,7 @@ public class RegisterAuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public String getDisplayType() {
-        return "webauthn register";
+        return "Webauthn Register";
     }
 
     @Override
@@ -64,7 +64,7 @@ public class RegisterAuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public String getHelpText() {
-        return "";
+        return "Register for WebAuthn";
     }
 
     @Override

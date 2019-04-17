@@ -25,6 +25,7 @@ import com.webauthn4j.validator.WebAuthnRegistrationContextValidationResponse;
 import com.webauthn4j.validator.WebAuthnRegistrationContextValidator;
 
 import org.jboss.logging.Logger;
+import org.keycloak.WebAuthnConstants;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.AuthenticationFlowException;
@@ -41,9 +42,8 @@ import javax.ws.rs.core.Response;
 import java.util.Base64;
 
 public class RegisterAuthenticator implements Authenticator {
-    private static final Logger logger = Logger.getLogger(RegisterAuthenticator.class);
 
-    private static final String AUTH_NOTE = "WEBAUTH_CHALLENGE";
+	private static final Logger logger = Logger.getLogger(RegisterAuthenticator.class);
 
     private final KeycloakSession session;
 
@@ -58,13 +58,13 @@ public class RegisterAuthenticator implements Authenticator {
         Challenge challenge = new DefaultChallenge();
         String challengeValue = Base64Url.encode(challenge.getValue());
         String origin = context.getUriInfo().getBaseUri().getHost();
-        context.getAuthenticationSession().setAuthNote(AUTH_NOTE, challengeValue);
+        context.getAuthenticationSession().setAuthNote(WebAuthnConstants.AUTH_CHALLENGE_NOTE, challengeValue);
 
         Response form = context.form()
-                .setAttribute("origin", origin)
-                .setAttribute("challenge", challengeValue)
-                .setAttribute("userid", userid)
-                .setAttribute("username", username)
+                .setAttribute(WebAuthnConstants.ORIGIN, origin)
+                .setAttribute(WebAuthnConstants.CHALLENGE, challengeValue)
+                .setAttribute(WebAuthnConstants.USER_ID, userid)
+                .setAttribute(WebAuthnConstants.USER_NAME, username)
                 .createForm("webauthn_register.ftl");
         context.challenge(form);
     }
@@ -75,22 +75,24 @@ public class RegisterAuthenticator implements Authenticator {
         MultivaluedMap<String, String> params = context.getHttpRequest().getDecodedFormParameters();
 
         // receive error from navigator.credentials.create()
-        String error = params.getFirst("error");
+        String error = params.getFirst(WebAuthnConstants.ERROR);
         if (error != null && !error.isEmpty()) {
             throw new AuthenticationFlowException("exception raised from navigator.credentials.create() : " + error, AuthenticationFlowError.INVALID_CREDENTIALS);
         }
 
         String baseUrl = UriUtils.getOrigin(context.getUriInfo().getBaseUri());
         String rpId = context.getUriInfo().getBaseUri().getHost();
-        byte[] clientDataJSON = Base64.getUrlDecoder().decode(params.getFirst("clientDataJSON"));
-        byte[] attestationObject = Base64.getUrlDecoder().decode(params.getFirst("attestationObject"));
-        String publicKeyCredentialId = params.getFirst("publicKeyCredentialId");
-        context.getUser().setSingleAttribute("PUBLIC_KEY_CREDENTIAL_ID", publicKeyCredentialId);
-        logger.debugv("publicKeyCredentialId = {0}", context.getUser().getAttribute("PUBLIC_KEY_CREDENTIAL_ID").get(0));
+        byte[] clientDataJSON = Base64.getUrlDecoder().decode(params.getFirst(WebAuthnConstants.CLIENT_DATA_JSON));
+        byte[] attestationObject = Base64.getUrlDecoder().decode(params.getFirst(WebAuthnConstants.ATTESTATION_OBJECT));
+        String publicKeyCredentialId = params.getFirst(WebAuthnConstants.PUBLIC_KEY_CREDENTIAL_ID);
+        // store received Credential ID on Registration onto UserModel in order to be used on Authentication
+        context.getUser().setSingleAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR, publicKeyCredentialId);
+        logger.debugv("publicKeyCredentialId = {0}", context.getUser().getAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR).get(0));
 
         Origin origin = new Origin(baseUrl);
-        Challenge challenge = new DefaultChallenge(context.getAuthenticationSession().getAuthNote(AUTH_NOTE));
+        Challenge challenge = new DefaultChallenge(context.getAuthenticationSession().getAuthNote(WebAuthnConstants.AUTH_CHALLENGE_NOTE));
         ServerProperty serverProperty = new ServerProperty(origin, rpId, challenge, null);
+
         try {
             WebAuthnRegistrationContext registrationContext = new WebAuthnRegistrationContext(clientDataJSON, attestationObject, serverProperty, false);
             WebAuthnRegistrationContextValidator webAuthnRegistrationContextValidator = WebAuthnRegistrationContextValidator.createNonStrictRegistrationContextValidator();
@@ -106,20 +108,7 @@ public class RegisterAuthenticator implements Authenticator {
             context.success();
         } catch (Exception me) {
             me.printStackTrace();
-            String userid = context.getUser().getId();
-            String username = context.getUser().getUsername();
-            Challenge ch = new DefaultChallenge();
-            String challengeValue = Base64.getUrlEncoder().withoutPadding().encodeToString(ch.getValue());
-            String ori = UriUtils.getOrigin(context.getUriInfo().getBaseUri());
-            context.getAuthenticationSession().setAuthNote("challenge", challengeValue);
-
-            Response form = context.form()
-                    .setAttribute("origin", ori)
-                    .setAttribute("challenge", challengeValue)
-                    .setAttribute("userid", userid)
-                    .setAttribute("username", username)
-                    .createForm("webauthn_register.ftl");           // TODO: treat error cases
-            context.challenge(form);
+            throw new AuthenticationFlowException("failed to update credential.", AuthenticationFlowError.INVALID_CREDENTIALS);
         }
     }
 

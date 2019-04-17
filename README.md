@@ -39,12 +39,22 @@ We've confirmed that this demo had worked well under the following environments:
 
 ## Install
 
-- build
+- Build:
 
   - `$ mvn install`
 
-- Add the EAR file to the Keycloak Server
+- Add the EAR file to the Keycloak Server:
+
   - `$ cp webuahtn4j-ear/target/keycloak-webauthn4j-ear-*.ear $KEYCLOAK_HOME/standalone/deployment/`
+
+- Deploy the EAR file dynamically when the Keycloak Server:
+
+  - `$ mvn clean install wildfly:deploy`
+
+- Report coverage
+
+  - `$ mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test`
+  - `$ mvn org.jacoco:jacoco-maven-plugin:report`
 
 ## Authentication Flow Settings
 

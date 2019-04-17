@@ -60,14 +60,14 @@ public class WebAuthnCredentialProvider implements CredentialProvider, Credentia
 
     @Override
     public boolean updateCredential(RealmModel realm, UserModel user, CredentialInput input) {
-        if (!supportsCredentialType(input.getType())) return false;
-        CredentialModel model = createCredentialModel(realm, user, input);
+        if (input == null) return false;
+        CredentialModel model = createCredentialModel(input);
         if (model == null) return false;
         session.userCredentialManager().createCredential(realm, user, model);
         return true;
     }
 
-    private CredentialModel createCredentialModel(RealmModel realm, UserModel user, CredentialInput input) {
+    private CredentialModel createCredentialModel(CredentialInput input) {
         if (!supportsCredentialType(input.getType())) return null;
 
         WebAuthnCredentialModel webAuthnModel = (WebAuthnCredentialModel) input;
@@ -152,7 +152,7 @@ public class WebAuthnCredentialProvider implements CredentialProvider, Credentia
                     // update authenticator counter
                     long count = auth.getCount();
                     auth.setCount(count + 1);
-                    CredentialModel cred = createCredentialModel(realm, user, auth);
+                    CredentialModel cred = createCredentialModel(auth);
                     session.userCredentialManager().updateCredential(realm, user, cred);
 
                     dumpCredentialModel(cred);

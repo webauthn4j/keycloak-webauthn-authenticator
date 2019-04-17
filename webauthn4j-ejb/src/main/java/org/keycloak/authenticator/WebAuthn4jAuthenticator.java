@@ -23,6 +23,7 @@ import com.webauthn4j.data.client.challenge.DefaultChallenge;
 import com.webauthn4j.server.ServerProperty;
 
 import org.jboss.logging.Logger;
+import org.keycloak.WebAuthnConstants;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.AuthenticationFlowException;
@@ -43,9 +44,8 @@ import java.util.List;
 import java.util.Map;
 
 public class WebAuthn4jAuthenticator implements Authenticator {
-    private static final Logger logger = Logger.getLogger(WebAuthn4jAuthenticator.class);
 
-    private static final String AUTH_NOTE = "WEBAUTH_CHALLENGE";
+    private static final Logger logger = Logger.getLogger(WebAuthn4jAuthenticator.class);
 
     private KeycloakSession session;
 
@@ -56,9 +56,9 @@ public class WebAuthn4jAuthenticator implements Authenticator {
     private Map<String, String> generateParameters(RealmModel realm, URI baseUri) {
         Map<String, String> params = new HashMap<>();
         Challenge challenge = new DefaultChallenge();
-        params.put("challenge", Base64Url.encode(challenge.getValue()));
-        params.put("rpId", baseUri.getHost());
-        params.put("origin", UriUtils.getOrigin(baseUri));
+        params.put(WebAuthnConstants.CHALLENGE, Base64Url.encode(challenge.getValue()));
+        params.put(WebAuthnConstants.RPID, baseUri.getHost());
+        params.put(WebAuthnConstants.ORIGIN, UriUtils.getOrigin(baseUri));
         params.put("settingsPath", Urls.realmBase(baseUri).path(realm.getName()).path("webauthn-settings").path("register").build().toString());
         return params;
     }
@@ -66,33 +66,33 @@ public class WebAuthn4jAuthenticator implements Authenticator {
     public void authenticate(AuthenticationFlowContext context) {
         LoginFormsProvider form = context.form();
         Map<String, String> params = generateParameters(context.getRealm(), context.getUriInfo().getBaseUri());
-        context.getAuthenticationSession().setAuthNote(AUTH_NOTE, params.get("challenge"));
+        context.getAuthenticationSession().setAuthNote(WebAuthnConstants.AUTH_CHALLENGE_NOTE, params.get(WebAuthnConstants.CHALLENGE));
         UserModel user = context.getUser();
+        String publicKeyCredentialId = ""; // NOTE : informs FreeMarker template of no need allowCredentials
         if (user != null) {
-            List<String> publicKeyCredentialIds = user.getAttribute("PUBLIC_KEY_CREDENTIAL_ID");
-            // in U2F Scenario
+            // in 2 Factor Scenario
+            List<String> publicKeyCredentialIds = user.getAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR);
             if (publicKeyCredentialIds == null || publicKeyCredentialIds.isEmpty()) {
                 throw new AuthenticationFlowException("public key credential id is not registerd.", AuthenticationFlowError.CREDENTIAL_SETUP_REQUIRED);
             } else if (publicKeyCredentialIds.size() > 1) {
                 throw new AuthenticationFlowException("multiple public key credential ids are registerd.", AuthenticationFlowError.CREDENTIAL_SETUP_REQUIRED);
             }
-            String publicKeyCredentialId = publicKeyCredentialIds.get(0);
+            publicKeyCredentialId = publicKeyCredentialIds.get(0);
             logger.debugv("publicKeyCredentialId = {0}", publicKeyCredentialId);
-            params.put("publicKeyCredentialId", publicKeyCredentialId);
         } else {
             // in Passwordless Scenario
-            params.put("publicKeyCredentialId", "");
+            // NOP
         }
+        params.put(WebAuthnConstants.PUBLIC_KEY_CREDENTIAL_ID, publicKeyCredentialId);
         params.forEach(form::setAttribute);
         context.challenge(form.createForm("webauthn.ftl"));
     }
 
     public void action(AuthenticationFlowContext context) {
-
         MultivaluedMap<String, String> params = context.getHttpRequest().getDecodedFormParameters();
 
         // receive error from navigator.credentials.get()
-        String error = params.getFirst("error");
+        String error = params.getFirst(WebAuthnConstants.ERROR);
         if (error != null && !error.isEmpty()) {
             throw new AuthenticationFlowException("exception raised from navigator.credentials.get() : " + error, AuthenticationFlowError.INVALID_USER);
         }
@@ -101,33 +101,33 @@ public class WebAuthn4jAuthenticator implements Authenticator {
         String rpId = context.getUriInfo().getBaseUri().getHost();
 
         Origin origin = new Origin(baseUrl);
-        Challenge challenge = new DefaultChallenge(context.getAuthenticationSession().getAuthNote(AUTH_NOTE));
+        Challenge challenge = new DefaultChallenge(context.getAuthenticationSession().getAuthNote(WebAuthnConstants.AUTH_CHALLENGE_NOTE));
         ServerProperty server = new ServerProperty(origin, rpId, challenge, null);
 
-        byte[] credentialId = Base64Url.decode(params.getFirst("credentialId"));
-        byte[] clientDataJSON = Base64Url.decode(params.getFirst("clientDataJSON"));
-        byte[] authenticatorData = Base64Url.decode(params.getFirst("authenticatorData"));
-        byte[] signature = Base64Url.decode(params.getFirst("signature"));
+        byte[] credentialId = Base64Url.decode(params.getFirst(WebAuthnConstants.CREDENTIAL_ID));
+        byte[] clientDataJSON = Base64Url.decode(params.getFirst(WebAuthnConstants.CLIENT_DATA_JSON));
+        byte[] authenticatorData = Base64Url.decode(params.getFirst(WebAuthnConstants.AUTHENTICATOR_DATA));
+        byte[] signature = Base64Url.decode(params.getFirst(WebAuthnConstants.SIGNATURE));
 
-        String userId = params.getFirst("userHandle");
+        String userId = params.getFirst(WebAuthnConstants.USER_HANDLE);
         boolean isUVFlagChecked = true;
         logger.debugv("userId = {0}", userId);
 
         if (userId == null || userId.isEmpty()) {
-            // in U2F win Resident Key not supported Authenticator Scenario
+            // in 2 Factor with Resident Key not supported Authenticator Scenario
             userId = context.getUser().getId();
             isUVFlagChecked = false;
         } else {
             if (context.getUser() != null) {
-                // in U2F with Resident Key supported Authenticator Scenario
+                // in 2 Factor with Resident Key supported Authenticator Scenario
                 String firstAuthenticatedUserId = context.getUser().getId();
                 logger.debugv("firstAuthenticatedUserId = {0}", firstAuthenticatedUserId);
                 if (firstAuthenticatedUserId != null && !firstAuthenticatedUserId.equals(userId)) {
                     throw new AuthenticationFlowException("First authenticated user is not the one authenticated by 2nd factor authenticator", AuthenticationFlowError.USER_CONFLICT);
                 }
             } else {
-                // NOP
                 // in Passwordless with Resident Key supported Authenticator Scenario
+                // NOP
             }
         }
         UserModel user = session.users().getUserById(userId, context.getRealm());
