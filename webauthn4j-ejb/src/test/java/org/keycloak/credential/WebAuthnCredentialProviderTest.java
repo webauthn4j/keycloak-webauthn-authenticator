@@ -16,9 +16,19 @@
 
 package org.keycloak.credential;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Base64;
+
+import org.keycloak.common.util.Base64Url;
+import org.keycloak.models.KeycloakSession;
+import org.keycloak.models.RealmModel;
+import org.keycloak.models.UserModel;
+
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.Before;
+
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -26,17 +36,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.never;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Base64;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.keycloak.common.util.Base64Url;
-import org.keycloak.models.KeycloakSession;
-import org.keycloak.models.RealmModel;
-import org.keycloak.models.UserModel;
 import org.mockito.Mockito;
 
 import com.webauthn4j.data.WebAuthnAuthenticationContext;
@@ -53,14 +52,14 @@ public class WebAuthnCredentialProviderTest {
     private KeycloakSession session;
     private WebAuthnCredentialProvider provider;
 
-    @BeforeEach
-    void setupMock() throws Exception {
+    @Before
+    public void setupMock() throws Exception {
         this.session = mock(KeycloakSession.class, Mockito.RETURNS_DEEP_STUBS);
         this.provider = new WebAuthnCredentialProvider(session);
     }
 
     @Test
-    void test_updateCredential() throws Exception {
+    public void test_updateCredential() throws Exception {
         // set up mock
         CredentialModel credModel = mock(CredentialModel.class);
         WebAuthnCredentialModel model = getValidWebAuthnCredentialModel();
@@ -69,27 +68,27 @@ public class WebAuthnCredentialProviderTest {
                 .thenReturn(credModel);
 
         // test
-        assertTrue(provider.updateCredential(mock(RealmModel.class), mock(UserModel.class), model));
+        Assert.assertTrue(provider.updateCredential(mock(RealmModel.class), mock(UserModel.class), model));
     }
 
     @Test
-    void test_updateCredential_input_null() throws Exception {
+    public void test_updateCredential_input_null() throws Exception {
         // test
-        assertFalse(provider.updateCredential(mock(RealmModel.class), mock(UserModel.class), null));
+        Assert.assertFalse(provider.updateCredential(mock(RealmModel.class), mock(UserModel.class), null));
     }
 
     @Test
-    void test_updateCredential_input_invalid_type() throws Exception {
+    public void test_updateCredential_input_invalid_type() throws Exception {
         // set up mock
         WebAuthnCredentialModel model = mock(WebAuthnCredentialModel.class);
         when(model.getType()).thenReturn("unknown");
 
         // test
-        assertFalse(provider.updateCredential(mock(RealmModel.class), mock(UserModel.class), model));
+        Assert.assertFalse(provider.updateCredential(mock(RealmModel.class), mock(UserModel.class), model));
     }
 
     @Test
-    void test_disableCredentialType() throws Exception {
+    public void test_disableCredentialType() throws Exception {
         // set up mock
         when(session.userCredentialManager()
                 .getStoredCredentialsByType(any(RealmModel.class), any(UserModel.class), anyString()))
@@ -99,19 +98,27 @@ public class WebAuthnCredentialProviderTest {
                 .thenReturn(true);
 
         // test
-        assertDoesNotThrow(() -> provider.disableCredentialType(mock(RealmModel.class), mock(UserModel.class), WebAuthnCredentialModel.WEBAUTHN_CREDENTIAL_TYPE));
+        try {
+            provider.disableCredentialType(mock(RealmModel.class), mock(UserModel.class), WebAuthnCredentialModel.WEBAUTHN_CREDENTIAL_TYPE);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
         verify(session.userCredentialManager(), times(1)).removeStoredCredential(any(RealmModel.class), any(UserModel.class), anyString());
     }
 
     @Test
-    void test_disableCredentialType_unknown_type() throws Exception {
+    public void test_disableCredentialType_unknown_type() throws Exception {
         // test
-        assertDoesNotThrow(() -> provider.disableCredentialType(mock(RealmModel.class), mock(UserModel.class), "unknown"));
+        try {
+            provider.disableCredentialType(mock(RealmModel.class), mock(UserModel.class), "unknown");
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
         verify(session.userCredentialManager(), never()).removeStoredCredential(any(RealmModel.class), any(UserModel.class), anyString());
     }
 
     @Test
-    void test_isConfiguredFor() {
+    public void test_isConfiguredFor() {
         // set up mock
         when(session.userCredentialManager()
                 .getStoredCredentialsByType(any(RealmModel.class), any(UserModel.class), anyString())
@@ -119,11 +126,15 @@ public class WebAuthnCredentialProviderTest {
                 .thenReturn(false);
 
         // test
-        assertDoesNotThrow(() -> provider.isConfiguredFor(mock(RealmModel.class), mock(UserModel.class), WebAuthnCredentialModel.WEBAUTHN_CREDENTIAL_TYPE));
+        try {
+            provider.isConfiguredFor(mock(RealmModel.class), mock(UserModel.class), WebAuthnCredentialModel.WEBAUTHN_CREDENTIAL_TYPE);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
-    void test_isConfiguredFor_empty() {
+    public void test_isConfiguredFor_empty() {
         // set up mock
         when(session.userCredentialManager()
                 .getStoredCredentialsByType(any(RealmModel.class), any(UserModel.class), anyString())
@@ -131,11 +142,15 @@ public class WebAuthnCredentialProviderTest {
                 .thenReturn(true);
 
         // test
-        assertDoesNotThrow(() -> provider.isConfiguredFor(mock(RealmModel.class), mock(UserModel.class), WebAuthnCredentialModel.WEBAUTHN_CREDENTIAL_TYPE));
+        try {
+            provider.isConfiguredFor(mock(RealmModel.class), mock(UserModel.class), WebAuthnCredentialModel.WEBAUTHN_CREDENTIAL_TYPE);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
-    void test_getDisableableCredentialTypes() {
+    public void test_getDisableableCredentialTypes() {
         // set up mock
         when(session.userCredentialManager()
                 .getStoredCredentialsByType(any(RealmModel.class), any(UserModel.class), anyString())
@@ -143,11 +158,11 @@ public class WebAuthnCredentialProviderTest {
                 .thenReturn(false);
 
         // test
-        assertFalse(provider.getDisableableCredentialTypes(mock(RealmModel.class), mock(UserModel.class)).isEmpty());
+        Assert.assertFalse(provider.getDisableableCredentialTypes(mock(RealmModel.class), mock(UserModel.class)).isEmpty());
     }
 
     @Test
-    void test_getDisableableCredentialTypes_empty() {
+    public void test_getDisableableCredentialTypes_empty() {
         // set up mock
         when(session.userCredentialManager()
                 .getStoredCredentialsByType(any(RealmModel.class), any(UserModel.class), anyString())
@@ -155,17 +170,21 @@ public class WebAuthnCredentialProviderTest {
                 .thenReturn(true);
 
         // test
-        assertTrue(provider.getDisableableCredentialTypes(mock(RealmModel.class), mock(UserModel.class)).isEmpty());
+        Assert.assertTrue(provider.getDisableableCredentialTypes(mock(RealmModel.class), mock(UserModel.class)).isEmpty());
     }
 
     @Test
-    void test_isConfiguredFor_unknown_type() {
+    public void test_isConfiguredFor_unknown_type() {
         // test
-        assertDoesNotThrow(() -> provider.isConfiguredFor(mock(RealmModel.class), mock(UserModel.class), "unknown"));
+        try {
+        	provider.isConfiguredFor(mock(RealmModel.class), mock(UserModel.class), "unknown");
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
-    void test_isValid() throws Exception {
+    public void test_isValid() throws Exception {
         // set up mock
         // mimic valid model created on Authentication
         WebAuthnAuthenticationContext authenticationContext = getValidWebAuthnAuthenticationContext();
@@ -183,11 +202,11 @@ public class WebAuthnCredentialProviderTest {
                 .thenReturn(Arrays.asList(credModel));
 
         // test
-        assertTrue(provider.isValid(mock(RealmModel.class), mock(UserModel.class), input));
+        Assert.assertTrue(provider.isValid(mock(RealmModel.class), mock(UserModel.class), input));
     }
 
     @Test
-    void test_isValid_credential_id_unmatch() throws Exception {
+    public void test_isValid_credential_id_unmatch() throws Exception {
         // set up mock
         // mimic invalid model created on Authentication
         WebAuthnAuthenticationContext authenticationContext = getValidWebAuthnAuthenticationContext("atgcatgcatgcatgc");
@@ -205,7 +224,7 @@ public class WebAuthnCredentialProviderTest {
                 .thenReturn(Arrays.asList(credModel));
 
         // test
-        assertFalse(provider.isValid(mock(RealmModel.class), mock(UserModel.class), input));
+        Assert.assertFalse(provider.isValid(mock(RealmModel.class), mock(UserModel.class), input));
     }
 
     private WebAuthnCredentialModel getValidWebAuthnCredentialModel() {

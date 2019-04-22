@@ -16,9 +16,8 @@
 
 package org.keycloak.models.jpa.converter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.Assert;
 
 import com.webauthn4j.data.attestation.authenticator.CredentialPublicKey;
 import com.webauthn4j.data.attestation.authenticator.Curve;
@@ -28,15 +27,15 @@ import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier;
 public class CredentialPublicKeyConverterTest {
 
     @Test
-    void test_converter() {
+    public void test_converter() {
         EC2CredentialPublicKey credentialPublicKey = EC2CredentialPublicKey.createFromUncompressedECCKey(createECCredentialPublicKey().getBytes());
         CredentialPublicKeyConverter converter = new CredentialPublicKeyConverter();
         String stringifiedKey = converter.convertToDatabaseColumn(credentialPublicKey);
         CredentialPublicKey key = converter.convertToEntityAttribute(stringifiedKey);
-        assertEquals(stringifiedKey, converter.convertToDatabaseColumn(key));
+        Assert.assertEquals(stringifiedKey, converter.convertToDatabaseColumn(key));
     }
 
-    public static EC2CredentialPublicKey createECCredentialPublicKey() {
+    private static EC2CredentialPublicKey createECCredentialPublicKey() {
         return new EC2CredentialPublicKey(
                 null,
                 COSEAlgorithmIdentifier.ES256,

@@ -16,9 +16,9 @@
 
 package org.keycloak.models.jpa.converter;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import org.junit.Test;
+import org.junit.Assert;
 
-import org.junit.jupiter.api.Test;
 import org.keycloak.models.utils.KeycloakModelUtils;
 
 import com.webauthn4j.data.attestation.authenticator.AAGUID;
@@ -26,10 +26,10 @@ import com.webauthn4j.data.attestation.authenticator.AAGUID;
 public class AAGUIDConverterTest {
 
     @Test
-    void test_convert() throws Exception {
+    public void test_convert() throws Exception {
         AAGUIDConverter converter = new AAGUIDConverter();
         byte[] aaguidBytes = converter.convertToDatabaseColumn(new AAGUID(KeycloakModelUtils.generateSecret(16)));
         AAGUID aaguidEntity = converter.convertToEntityAttribute(aaguidBytes);
-        assertArrayEquals(aaguidBytes, converter.convertToDatabaseColumn(aaguidEntity));
+        Assert.assertArrayEquals(aaguidBytes, converter.convertToDatabaseColumn(aaguidEntity));
     }
 }

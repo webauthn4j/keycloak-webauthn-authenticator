@@ -16,9 +16,8 @@
 
 package org.keycloak.models.jpa.converter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.Assert;
 
 import com.webauthn4j.data.attestation.statement.AttestationStatement;
 import com.webauthn4j.data.attestation.statement.NoneAttestationStatement;
@@ -26,10 +25,10 @@ import com.webauthn4j.data.attestation.statement.NoneAttestationStatement;
 public class AttestationStatementConverterTest {
 
     @Test
-    void test_converter() throws Exception {
+    public void test_converter() throws Exception {
         AttestationStatementConverter converter = new AttestationStatementConverter();
         String stringifiedStatement = converter.convertToDatabaseColumn(new NoneAttestationStatement());
         AttestationStatement statement = converter.convertToEntityAttribute(stringifiedStatement);
-        assertEquals(stringifiedStatement, converter.convertToDatabaseColumn(statement));
+        Assert.assertEquals(stringifiedStatement, converter.convertToDatabaseColumn(statement));
     }
 }

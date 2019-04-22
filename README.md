@@ -98,7 +98,7 @@ We've confirmed that this demo had worked well under the following environments:
 
 - [x] [credential storage : avoid creating a new table for credentials](https://github.com/webauthn4j/keycloak-webauthn-authenticator/issues/7)
 - [x] [webauthn4j 0.9.2.RELEASE support](https://github.com/webauthn4j/keycloak-webauthn-authenticator/issues/8)
-- [x] Unit Test
+- [x] [Unit Test](https://github.com/webauthn4j/keycloak-webauthn-authenticator/issues/13)
 - [ ] CI Integration
 
 _TBD_

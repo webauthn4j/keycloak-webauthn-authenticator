@@ -16,16 +16,6 @@
 
 package org.keycloak.authenticator;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +35,15 @@ import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 import org.keycloak.models.utils.KeycloakModelUtils;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.Before;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
 import org.mockito.Mockito;
 
 public class WebAuthn4jAuthenticatorTest {
@@ -55,8 +52,8 @@ public class WebAuthn4jAuthenticatorTest {
     private WebAuthn4jAuthenticator authenticator;
     private AuthenticationFlowContext context;
 
-    @BeforeEach
-    void setupMock() throws Exception {
+    @Before
+    public void setupMock() throws Exception {
         this.session = mock(KeycloakSession.class, Mockito.RETURNS_DEEP_STUBS);
         this.authenticator = new WebAuthn4jAuthenticator(session);
         this.context = mock(AuthenticationFlowContext.class, Mockito.RETURNS_DEEP_STUBS);
@@ -66,30 +63,44 @@ public class WebAuthn4jAuthenticatorTest {
     }
 
     @Test
-    void test_authenticate_2factor() throws Exception {
+    public void test_authenticate_2factor() throws Exception {
         // set up mock
         List<String> publicKeyCredentialIds = new ArrayList<>();
         publicKeyCredentialIds.add(getRandomString(32));
         when(context.getUser().getAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR)).thenReturn(publicKeyCredentialIds);
 
         // test
-        assertDoesNotThrow(() -> authenticator.authenticate(context));
+        try {
+        	authenticator.authenticate(context);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
         verify(context).challenge(any(Response.class));
     }
 
     @Test
-    void test_authenticate_2factor_publickey_not_registered() throws Exception {
+    public void test_authenticate_2factor_publickey_not_registered() throws Exception {
         // set up mock
         when(context.getUser().getAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR)).thenReturn(null);
 
         // test
-        assertThrows(AuthenticationFlowException.class, () -> authenticator.authenticate(context));
+        try {
+            authenticator.authenticate(context);
+            Assert.fail();
+        } catch (AuthenticationFlowException e) {
+            // NOP
+        }
         when(context.getUser().getAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR)).thenReturn(new ArrayList<String>());
-        assertThrows(AuthenticationFlowException.class, () -> authenticator.authenticate(context));
+        try {
+            authenticator.authenticate(context);
+            Assert.fail();
+        } catch (AuthenticationFlowException e) {
+            // NOP
+        }
     }
 
     @Test
-    void test_authenticate_2factor_multiple_publicKey_registered() throws Exception {
+    public void test_authenticate_2factor_multiple_publicKey_registered() throws Exception {
         // set up mock
         List<String> publicKeyCredentialIds = new ArrayList<>();
         publicKeyCredentialIds.add(getRandomString(32));
@@ -97,21 +108,30 @@ public class WebAuthn4jAuthenticatorTest {
         when(context.getUser().getAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR)).thenReturn(publicKeyCredentialIds);
 
         // test
-        assertThrows(AuthenticationFlowException.class, () -> authenticator.authenticate(context));
+        try {
+            authenticator.authenticate(context);
+            Assert.fail();
+        } catch (AuthenticationFlowException e) {
+            // NOP
+        }
     }
 
     @Test
-    void test_authenticate_passwordless() throws Exception {
+    public void test_authenticate_passwordless() throws Exception {
         // set up mock
         when(context.getUser()).thenReturn(null);
 
         // test
-        assertDoesNotThrow(() -> authenticator.authenticate(context));
+        try {
+            authenticator.authenticate(context);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
         verify(context).challenge(any(Response.class));
     }
 
     @Test
-    void test_action_passwordless() throws Exception {
+    public void test_action_passwordless() throws Exception {
         // set up mock
         when(session.userCredentialManager()
                 .isValid(any(RealmModel.class), any(UserModel.class), Mockito.<CredentialInput>anyVararg()))
@@ -124,14 +144,18 @@ public class WebAuthn4jAuthenticatorTest {
                 .thenReturn(getRandomString(32));
 
         // test
-        assertDoesNotThrow(() -> authenticator.action(context));
+        try {
+            authenticator.action(context);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
         verify(context, times(1)).setUser(any(UserModel.class));
         verify(context).success();
     }
 
     
     @Test
-    void test_action_credential_not_valid() throws Exception {
+    public void test_action_credential_not_valid() throws Exception {
         // set up mock
         when(session.userCredentialManager()
                 .isValid(Mockito.any(RealmModel.class), any(UserModel.class), Mockito.<CredentialInput>anyVararg()))
@@ -144,11 +168,16 @@ public class WebAuthn4jAuthenticatorTest {
                 .thenReturn(getRandomString(32));
 
         // test
-        assertThrows(AuthenticationFlowException.class, () -> authenticator.action(context));
+        try {
+            authenticator.action(context);
+            Assert.fail();
+        } catch (AuthenticationFlowException e) {
+            // NOP
+        }
     }
 
     @Test
-    void test_action_credential_validation_fail() throws Exception {
+    public void test_action_credential_validation_fail() throws Exception {
         // set up mock
         when(session.userCredentialManager()
                 .isValid(any(RealmModel.class), any(UserModel.class), Mockito.<CredentialInput>anyVararg()))
@@ -161,23 +190,32 @@ public class WebAuthn4jAuthenticatorTest {
                 .thenReturn(getRandomString(32));
 
         // test
-        assertDoesNotThrow(() -> authenticator.action(context));
+        try {
+            authenticator.action(context);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
         Mockito.verify(context).cancelLogin();
     }
 
     @Test
-    void test_action_navigator_credentials_get_error() throws Exception {
+    public void test_action_navigator_credentials_get_error() throws Exception {
         // set up mock
         MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
         params.add("error", "The user attempted to use an authenticator that recognized none of the provided credentials");
         when(context.getHttpRequest().getDecodedFormParameters()).thenReturn(params);
 
         // test
-        assertThrows(AuthenticationFlowException.class, () -> authenticator.action(context));
+        try {
+            authenticator.action(context);
+            Assert.fail();
+        } catch (AuthenticationFlowException e) {
+            // NOP
+        }
     }
 
     @Test
-    void test_action_2factor_residentkey() throws Exception {
+    public void test_action_2factor_residentkey() throws Exception {
         // set up mock
         when(session.userCredentialManager()
                 .isValid(any(RealmModel.class), any(UserModel.class), Mockito.<CredentialInput>anyVararg()))
@@ -195,13 +233,17 @@ public class WebAuthn4jAuthenticatorTest {
         when(context.getUser()).thenReturn(user);
 
         // test
-        assertDoesNotThrow(() -> authenticator.action(context));
+        try {
+            authenticator.action(context);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
         verify(context, times(1)).setUser(any(UserModel.class));
         verify(context).success();
     }
 
     @Test
-    void test_action_2factor_residentkey_different_user_authenticated() throws Exception {
+    public void test_action_2factor_residentkey_different_user_authenticated() throws Exception {
         // set up mock
         String userId = getRandomString(32);
         MultivaluedMap<String, String> params = getSimulatedParametersFromAuthenticationResponse(userId);
@@ -215,33 +257,44 @@ public class WebAuthn4jAuthenticatorTest {
         when(context.getUser()).thenReturn(user);
 
         // test
-        assertThrows(AuthenticationFlowException.class, () -> authenticator.action(context));
+        try {
+            authenticator.action(context);
+            Assert.fail();
+        } catch (AuthenticationFlowException e) {
+            // NOP
+        }
     }
 
     @Test
-    void test_requiresUser() throws Exception {
+    public void test_requiresUser() throws Exception {
         // test
-        assertFalse(authenticator.requiresUser());
+        Assert.assertFalse(authenticator.requiresUser());
     }
 
     @Test
-    void test_close() throws Exception {
+    public void test_close() throws Exception {
         // test
-        assertDoesNotThrow(() -> authenticator.close());
+        try {
+            authenticator.close();
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
-    void test_configuredFor() throws Exception {
+    public void test_configuredFor() throws Exception {
         // test
-        assertTrue(authenticator.configuredFor(session, mock(RealmModel.class), mock(UserModel.class)));
+        Assert.assertTrue(authenticator.configuredFor(session, mock(RealmModel.class), mock(UserModel.class)));
     }
 
     @Test
-    void test_setRequiredActions() throws Exception {
+    public void test_setRequiredActions() throws Exception {
         // test
-        assertDoesNotThrow(
-            () -> authenticator.setRequiredActions(session, mock(RealmModel.class), mock(UserModel.class))
-        );
+        try {
+            authenticator.setRequiredActions(session, mock(RealmModel.class), mock(UserModel.class));
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     private String getRandomString(int sizeInByte) {

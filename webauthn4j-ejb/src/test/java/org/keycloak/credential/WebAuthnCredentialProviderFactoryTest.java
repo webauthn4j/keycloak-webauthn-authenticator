@@ -16,32 +16,32 @@
 
 package org.keycloak.credential;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.keycloak.models.KeycloakSession;
+
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.Before;
+
+import static org.mockito.Mockito.mock;
 
 public class WebAuthnCredentialProviderFactoryTest {
 
     private KeycloakSession session;
     private WebAuthnCredentialProviderFactory factory;
 
-    @BeforeEach
-    void setupMock() throws Exception {
+    @Before
+    public void setupMock() throws Exception {
         this.session = mock(KeycloakSession.class);
         this.factory = new WebAuthnCredentialProviderFactory();
     }
 
     @Test
-    void test_create() throws Exception {
-        assertNotNull(factory.create(session));
+    public void test_create() throws Exception {
+        Assert.assertNotNull(factory.create(session));
     }
 
     @Test
-    void test_getId() {
-        assertEquals("keycloak-webauthn", factory.getId());
+    public void test_getId() {
+        Assert.assertEquals("keycloak-webauthn", factory.getId());
     }
 }

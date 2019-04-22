@@ -16,17 +16,13 @@
 
 package org.keycloak.authenticator;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import org.junit.jupiter.api.Test;
 import org.keycloak.models.AuthenticationExecutionModel;
 import org.keycloak.models.KeycloakSession;
+
+import org.junit.Test;
+import org.junit.Assert;
+
+import static org.mockito.Mockito.mock;
 import org.mockito.Mockito;
 
 public class RegisterAuthenticatorFactoryTest {
@@ -34,19 +30,19 @@ public class RegisterAuthenticatorFactoryTest {
     @Test
     public void test_getDisplayType() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertEquals("Webauthn Register", factory.getDisplayType());
+        Assert.assertEquals("Webauthn Register", factory.getDisplayType());
     }
 
     @Test
     public void test_getReferenceCategory() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertEquals(null, factory.getReferenceCategory());
+        Assert.assertEquals(null, factory.getReferenceCategory());
     }
 
     @Test
     public void test_isConfigurable() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertFalse(factory.isConfigurable());
+        Assert.assertFalse(factory.isConfigurable());
     }
 
     @Test
@@ -57,31 +53,35 @@ public class RegisterAuthenticatorFactoryTest {
                 AuthenticationExecutionModel.Requirement.ALTERNATIVE,
                 AuthenticationExecutionModel.Requirement.DISABLED,
         };
-        assertArrayEquals(requirements, factory.getRequirementChoices());
+        Assert.assertArrayEquals(requirements, factory.getRequirementChoices());
     }
 
     @Test
     public void test_isUserSetupAllowed() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertFalse(factory.isUserSetupAllowed());
+        Assert.assertFalse(factory.isUserSetupAllowed());
     }
 
     @Test
     public void test_getHelpText() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertEquals("Register for WebAuthn", factory.getHelpText());
+        Assert.assertEquals("Register for WebAuthn", factory.getHelpText());
     }
 
     @Test
     public void test_getConfigProperties() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertTrue(factory.getConfigProperties().isEmpty());
+        Assert.assertTrue(factory.getConfigProperties().isEmpty());
     }
 
     @Test
     public void test_init() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertDoesNotThrow(() -> factory.init(null));
+        try {
+            factory.init(null);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
@@ -89,24 +89,32 @@ public class RegisterAuthenticatorFactoryTest {
         KeycloakSession session = mock(KeycloakSession.class, Mockito.RETURNS_DEEP_STUBS);
 
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertNotNull(factory.create(session));
+        Assert.assertNotNull(factory.create(session));
     }
 
     @Test
     public void test_postInit() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertDoesNotThrow(() -> factory.postInit(null));
+        try {
+            factory.postInit(null);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
     public void test_close() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertDoesNotThrow(() -> factory.close());
+        try {
+            factory.close();
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
     public void test_getId() throws Exception {
         RegisterAuthenticatorFactory factory = new RegisterAuthenticatorFactory();
-        assertEquals(RegisterAuthenticatorFactory.PROVIDER_ID, factory.getId());
+        Assert.assertEquals(RegisterAuthenticatorFactory.PROVIDER_ID, factory.getId());
     }
 }

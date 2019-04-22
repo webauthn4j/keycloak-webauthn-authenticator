@@ -16,15 +16,6 @@
 
 package org.keycloak.authenticator;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.never;
-
 import java.net.URI;
 
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -38,8 +29,14 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.Before;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 import org.mockito.Mockito;
 
 public class RegisterAuthenticatorTest {
@@ -56,8 +53,8 @@ public class RegisterAuthenticatorTest {
     private static final String PublicKeyCredentialIdSample
         = "2XlyrnuAWWjJNFpHOymSZW1oWOx4W5qzwvOYJr38zjS1kfCc7G4MUuP_8hCSYKL1vC1d_EZTwvchtegl_5HW_g";
 
-    @BeforeEach
-    void setupMock() throws Exception {
+    @Before
+    public void setupMock() throws Exception {
         this.session = mock(KeycloakSession.class, Mockito.RETURNS_DEEP_STUBS);
         this.authenticator = new RegisterAuthenticator(session);
         this.context = mock(AuthenticationFlowContext.class, Mockito.RETURNS_DEEP_STUBS);
@@ -67,38 +64,34 @@ public class RegisterAuthenticatorTest {
     }
 
     @Test
-    void test_authenticate() throws Exception {
-        // set up mock
-        /*
-        doAnswer(new Answer() {
-                public Object answer(InvocationOnMock invocation) {
-                    Object[] args = invocation.getArguments();
-                    Object mock = invocation.getMock();
-                    Response response = (Response) args[0];
-                    System.out.println("WWWWWWWWWW called with arguments: " + response.getClass().getCanonicalName());
-                    return null;
-                }
-            }
-        ).when(context).challenge(any(Response.class));
-        */
+    public void test_authenticate() throws Exception {
         // test
-        assertDoesNotThrow(() -> authenticator.authenticate(context));
+        try {
+            authenticator.authenticate(context);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
         verify(context).challenge(any(Response.class));
     }
 
     @Test
-    void test_action_navigator_credentials_create_error() throws Exception {
+    public void test_action_navigator_credentials_create_error() throws Exception {
         // set up mock
         MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
         params.add(WebAuthnConstants.ERROR, "NotAllowedError");
         when(context.getHttpRequest().getDecodedFormParameters()).thenReturn(params);
 
         // test
-        assertThrows(AuthenticationFlowException.class, () -> authenticator.action(context));
+        try {
+            authenticator.action(context);
+            Assert.fail();
+        } catch (AuthenticationFlowException e) {
+            // NOP
+        }
     }
 
     @Test
-    void test_action() throws Exception {
+    public void test_action() throws Exception {
         // set up mock
         MultivaluedMap<String, String> params = getSimulatedParametersFromRegistrationResponse();
         when(context.getHttpRequest().getDecodedFormParameters()).thenReturn(params);
@@ -107,12 +100,16 @@ public class RegisterAuthenticatorTest {
                 .thenReturn(RegisterAuthenticatorTest.ChallengeSample);
 
         // test
-        assertDoesNotThrow(() -> authenticator.action(context));
+        try {
+            authenticator.action(context);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
         verify(context).success();
     }
 
     @Test
-    void test_action_webauthn4j_validation_fails() throws Exception {
+    public void test_action_webauthn4j_validation_fails() throws Exception {
         // setup mock
         MultivaluedMap<String, String> params = getSimulatedParametersFromRegistrationResponse();
         when(context.getHttpRequest().getDecodedFormParameters()).thenReturn(params);
@@ -120,31 +117,44 @@ public class RegisterAuthenticatorTest {
         when(context.getAuthenticationSession().getAuthNote(WebAuthnConstants.AUTH_CHALLENGE_NOTE)).thenReturn("7777777777777777");
 
         // test
-        assertThrows(AuthenticationFlowException.class, () -> authenticator.action(context));
+        try {
+            authenticator.action(context);
+            Assert.fail();
+        } catch (AuthenticationFlowException e) {
+            // NOP
+        }
     }
 
     @Test
-    void test_requiresUser() throws Exception {
+    public void test_requiresUser() throws Exception {
         // test
-        assertTrue(authenticator.requiresUser());
+        Assert.assertTrue(authenticator.requiresUser());
     }
 
     @Test
-    void test_close() throws Exception {
+    public void test_close() throws Exception {
         // test
-        assertDoesNotThrow(() -> authenticator.close());
+        try {
+            authenticator.close();
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
-    void test_configuredFor() throws Exception {
+    public void test_configuredFor() throws Exception {
         // test
-        assertTrue(authenticator.configuredFor(session, mock(RealmModel.class), mock(UserModel.class)));
+        Assert.assertTrue(authenticator.configuredFor(session, mock(RealmModel.class), mock(UserModel.class)));
     }
 
     @Test
-    void test_setRequiredActions() throws Exception {
+    public void test_setRequiredActions() throws Exception {
         // test
-        assertDoesNotThrow(() -> authenticator.setRequiredActions(session, mock(RealmModel.class), mock(UserModel.class)));
+        try {
+            authenticator.setRequiredActions(session, mock(RealmModel.class), mock(UserModel.class));
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     private MultivaluedMap<String, String> getSimulatedParametersFromRegistrationResponse() {

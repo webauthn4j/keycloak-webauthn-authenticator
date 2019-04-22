@@ -16,50 +16,61 @@
 
 package org.keycloak.endpoint;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.keycloak.Config;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
+
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.Before;
+
+import static org.mockito.Mockito.mock;
 
 public class WebAuthnSettingsProviderFactoryTest {
 
     private KeycloakSession session;
     private WebAuthnSettingsProviderFactory factory;
 
-    @BeforeEach
-    void setupMock() throws Exception {
+    @Before
+    public void setupMock() throws Exception {
         this.session = mock(KeycloakSession.class);
         this.factory = new WebAuthnSettingsProviderFactory();
     }
 
     @Test
-    void test_create() throws Exception {
-        assertNotNull(factory.create(session));
+    public void test_create() {
+        Assert.assertNotNull(factory.create(session));
     }
 
     @Test
-    void test_init() {
-        assertDoesNotThrow(() -> factory.init(mock(Config.Scope.class)));
+    public void test_init() {
+        try {
+        	factory.init(mock(Config.Scope.class));
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
-    void test_postInit() {
-        assertDoesNotThrow(() -> factory.postInit(mock(KeycloakSessionFactory.class)));
+    public void test_postInit() {
+        try {
+            factory.postInit(mock(KeycloakSessionFactory.class));
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
-    void test_close() {
-        assertDoesNotThrow(() -> factory.close());
+    public void test_close() {
+        try {
+            factory.close();
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
-    void test_getId() {
-        assertEquals("webauthn-settings", factory.getId());
+    public void test_getId() throws Exception {
+        Assert.assertEquals("webauthn-settings", factory.getId());
     }
 }

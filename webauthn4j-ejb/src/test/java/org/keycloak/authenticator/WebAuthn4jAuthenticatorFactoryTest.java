@@ -16,17 +16,13 @@
 
 package org.keycloak.authenticator;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import org.junit.jupiter.api.Test;
 import org.keycloak.models.AuthenticationExecutionModel;
 import org.keycloak.models.KeycloakSession;
+
+import org.junit.Test;
+import org.junit.Assert;
+
+import static org.mockito.Mockito.mock;
 import org.mockito.Mockito;
 
 public class WebAuthn4jAuthenticatorFactoryTest {
@@ -34,19 +30,19 @@ public class WebAuthn4jAuthenticatorFactoryTest {
     @Test
     public void test_getDisplayType() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertEquals("WebAuthn Authenticator", factory.getDisplayType());
+        Assert.assertEquals("WebAuthn Authenticator", factory.getDisplayType());
     }
 
     @Test
     public void test_getReferenceCategory() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertEquals("auth", factory.getReferenceCategory());
+        Assert.assertEquals("auth", factory.getReferenceCategory());
     }
 
     @Test
     public void test_isConfigurable() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertFalse(factory.isConfigurable());
+        Assert.assertFalse(factory.isConfigurable());
     }
 
     @Test
@@ -57,31 +53,35 @@ public class WebAuthn4jAuthenticatorFactoryTest {
                 AuthenticationExecutionModel.Requirement.ALTERNATIVE,
                 AuthenticationExecutionModel.Requirement.DISABLED,
         };
-        assertArrayEquals(requirements, factory.getRequirementChoices());
+        Assert.assertArrayEquals(requirements, factory.getRequirementChoices());
     }
 
     @Test
     public void test_isUserSetupAllowed() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertTrue(factory.isUserSetupAllowed());
+        Assert.assertTrue(factory.isUserSetupAllowed());
     }
 
     @Test
     public void test_getHelpText() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertEquals("Authenticator for WebAuthn", factory.getHelpText());
+        Assert.assertEquals("Authenticator for WebAuthn", factory.getHelpText());
     }
 
     @Test
     public void test_getConfigProperties() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertTrue(factory.getConfigProperties().isEmpty());
+        Assert.assertTrue(factory.getConfigProperties().isEmpty());
     }
 
     @Test
     public void test_init() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertDoesNotThrow(() -> factory.init(null));
+        try {
+            factory.init(null);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
@@ -89,24 +89,32 @@ public class WebAuthn4jAuthenticatorFactoryTest {
         KeycloakSession session = mock(KeycloakSession.class, Mockito.RETURNS_DEEP_STUBS);
 
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertNotNull(factory.create(session));
+        Assert.assertNotNull(factory.create(session));
     }
 
     @Test
     public void test_postInit() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertDoesNotThrow(() -> factory.postInit(null));
+        try {
+            factory.postInit(null);
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
     public void test_close() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertDoesNotThrow(() -> factory.close());
+        try {
+            factory.close();
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     @Test
     public void test_getId() throws Exception {
         WebAuthn4jAuthenticatorFactory factory = new WebAuthn4jAuthenticatorFactory();
-        assertEquals(WebAuthn4jAuthenticatorFactory.PROVIDER_ID, factory.getId());
+        Assert.assertEquals(WebAuthn4jAuthenticatorFactory.PROVIDER_ID, factory.getId());
     }
 }

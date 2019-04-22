@@ -16,14 +16,13 @@
 
 package org.keycloak.endpoint;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.keycloak.models.KeycloakSession;
+
+import org.junit.Test;
+import org.junit.Assert;
+import org.junit.Before;
+
+import static org.mockito.Mockito.mock;
 
 import com.webauthn4j.data.PublicKeyCredentialCreationOptions;
 
@@ -32,26 +31,30 @@ public class WebAuthnSettingsProviderTest {
     private KeycloakSession session;
     private WebAuthnSettingsProvider provider;
 
-    @BeforeEach
-    void setupMock() throws Exception {
+    @Before
+    public void setupMock() throws Exception {
         this.session = mock(KeycloakSession.class);
         this.provider = new WebAuthnSettingsProvider(session);
     }
 
     @Test
-    void test_getRegistrationSetting() throws Exception {
+    public void test_getRegistrationSetting() throws Exception {
         PublicKeyCredentialCreationOptions options = provider.getRegistrationSetting();
-        assertTrue(isValidOptions(options));
+        Assert.assertTrue(isValidOptions(options));
     }
 
     @Test
-    void test_getResource() {
-        assertEquals(provider, provider.getResource());
+    public void test_getResource() {
+        Assert.assertEquals(provider, provider.getResource());
     }
 
     @Test
-    void test_close() {
-        assertDoesNotThrow(() -> provider.close());
+    public void test_close() {
+        try {
+            provider.close();
+        } catch (Exception e) {
+            Assert.fail(e.getMessage());
+        }
     }
 
     private boolean isValidOptions(PublicKeyCredentialCreationOptions options) {
