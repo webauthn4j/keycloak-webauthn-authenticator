@@ -47,7 +47,7 @@ We've confirmed that this demo had worked well under the following environments:
 
   - `$ cp webuahtn4j-ear/target/keycloak-webauthn4j-ear-*.ear $KEYCLOAK_HOME/standalone/deployment/`
 
-- Deploy the EAR file dynamically when the Keycloak Server:
+- Or deploy the EAR file dynamically when the Keycloak Server:
 
   - `$ mvn clean install wildfly:deploy`
 
@@ -56,22 +56,36 @@ We've confirmed that this demo had worked well under the following environments:
   - `$ mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent test`
   - `$ mvn org.jacoco:jacoco-maven-plugin:report`
 
-## Authentication Flow Settings
+## Overview
 
-### Realm Settings
+This prototype consists of two components:
+
+- WebAuthn Register
+
+This enable users to register their accounts on keycloak with their authenticators' generating public key credentials. It is implemented as `Required Action`.
+
+- WebAuthn Authenticator
+
+This enable users to authenticate themselves on keycloak by their authenticators. It is implemented as `Authenticaor`.
+
+## Realm Settings
+
+To enable user without their accounts on keycloak to register them on the authentication flow:
 
 - Enable `User registration` in 'Realm Settings' - 'Login'
 
-### Registration Flow
+## Authentication Required Actions Settings
 
-| Auth Type                              |                            | Requirement |
-| -------------------------------------- | -------------------------- | ----------- |
-| Copy Of Registration Registration Form |                            | REQUIRED    |
-|                                        | Registration User Creation | REQUIRED    |
-|                                        | Profile Validation         | REQUIRED    |
-|                                        | Password Validation        | REQUIRED    |
-|                                        | Recaptcha                  | DISABLED    |
-| WebAuthn Register                      |                            | REQUIRED    |
+To enable users to register their accounts with their authenticators' creating public key credentials:
+
+-  register `Webauthn Register` Required Action in 'Required Actons' - 'Register'
+
+-  check `Enabled` and `Default Action` for registered `Webauthn Register` Required Action
+
+
+## Authentication Flow Settings
+
+To enable users having their accounts on keycloak to authenticate themselves on keycloak by their authenticators:
 
 ### Browser Flow (2 Factor Authentication)
 
@@ -93,6 +107,12 @@ We've confirmed that this demo had worked well under the following environments:
 | Kerberos                     |     | DISABLED    |
 | Identity Provider Redirector |     | ALTERNATIVE |
 | WebAuthn Authenticator       |     | REQUIRED    |
+
+### Notes
+
+Browser Flow (Use `Resident Key`) automatically asks users to authenticate on their authenticators. Therefore, the users without their accounts have no chance to register them on this flow.
+
+For such the users to register their accounts, please use the default Browser Flow. It is helpful to user `Authentication Flow Overrides` on Client Settings. You can set the default Browser Flow for User Accont Service (Client ID: account) to let users register their accounts at first.
 
 ## TODO
 
