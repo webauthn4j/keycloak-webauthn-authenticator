@@ -18,7 +18,7 @@ We've confirmed that this demo had worked well under the following environments:
 
 - 2 Factor Authentication with Resident Key Not supported Authenticator Scenario
 
-  - OS : macOS OS Mojave (ver 10.14.3)
+  - OS : macOS Mojave (ver 10.14.3)
   - Browser : Google Chrome (ver 73), Mozilla FireFox (ver 66)
   - Authenticator : Yubico Security Key
   - Server(RP) : keycloak-5.0.0 on localhost
@@ -29,6 +29,13 @@ We've confirmed that this demo had worked well under the following environments:
   - Browser : Microsoft Edge (ver 44)
   - Authenticator : Internal Fingerprint Authentication Device
   - Server(RP) : keycloak-5.0.0 on localhost
+
+- 2 Factor Authentication with Resident Key supported Authenticator Scenario
+
+  - OS : macOS Mojave (ver 10.14.4)
+  - Browser : Google Chrome (ver 75)
+  - Authenticator : Touch ID
+  - Server(RP) : keycloak-6.0.1 on localhost
 
 - Authentication with Resident Key supported Authenticator Scenario
 
