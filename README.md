@@ -75,7 +75,7 @@ We've confirmed that this demo had worked well under the following environments:
 
   - `$ cp webauthn4j-ear/target/keycloak-webauthn4j-ear-*.ear $KEYCLOAK_HOME/standalone/deployments/`
 
-- Or deploy the EAR file dynamically when the Keycloak Server:
+- Or deploy the EAR file dynamically when the Keycloak Server is running:
 
   - `$ mvn clean install wildfly:deploy`
 
