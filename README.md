@@ -73,7 +73,7 @@ We've confirmed that this demo had worked well under the following environments:
 
 - Add the EAR file to the Keycloak Server:
 
-  - `$ cp webuahtn4j-ear/target/keycloak-webauthn4j-ear-*.ear $KEYCLOAK_HOME/standalone/deployment/`
+  - `$ cp webauthn4j-ear/target/keycloak-webauthn4j-ear-*.ear $KEYCLOAK_HOME/standalone/deployments/`
 
 - Or deploy the EAR file dynamically when the Keycloak Server:
 
@@ -122,7 +122,7 @@ To enable users having their accounts on keycloak to authenticate themselves on 
 | Cookie                       |                        | ALTERNATIVE |
 | Kerberos                     |                        | DISABLED    |
 | Identity Provider Redirector |                        | ALTERNATIVE |
-| Copy of Browser Flow         |                        | ALTERNATIVE |
+| Copy of Browser Forms        |                        | ALTERNATIVE |
 |                              | Username Password Form | REQUIRED    |
 |                              | OTP Form               | OPTIONAL    |
 |                              | WebAuthn Authenticator | REQUIRED    |
@@ -142,7 +142,7 @@ To enable users having their accounts on keycloak to authenticate themselves on 
 
 Browser Flow (Use `Resident Key`) automatically asks users to authenticate on their authenticators. Therefore, the users without their accounts have no chance to register them on this flow.
 
-For such the users to register their accounts, please use the default Browser Flow. It is helpful to user `Authentication Flow Overrides` on Client Settings. You can set the default Browser Flow for User Accont Service (Client ID: account) to let users register their accounts at first.
+For such the users to register their accounts, please use the default Browser Flow. It is helpful to user `Authentication Flow Overrides` on Client Settings. You can set the default Browser Flow for User Account Service (Client ID: account) to let users register their accounts at first.
 
 ### Requiring Resident Key in Registration
 
