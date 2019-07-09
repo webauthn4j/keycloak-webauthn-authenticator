@@ -19,7 +19,8 @@
         var challenge = "${challenge}";
         var userid = "${userid}";
         var username = "${username}";
-        var origin = "${origin}"
+        var origin = "${origin}";
+        var requireResidentKey = window.confirm("If you wish to store your ID and its credential in your authenticator, push OK button.\n NOTECE: Not all authenticator can do that. Please make sure whether your autheticator has its capability.");
         var publicKey = {
             challenge: base64url.decode(challenge, { loose: true }),
             rp: {
@@ -40,7 +41,9 @@
                     alg: -7
                 }
             ],
-            timeout : 60000,
+            authenticatorSelection: {
+                requireResidentKey: requireResidentKey
+            },
             excludeCredentials: [],
             extensions: {}
         };

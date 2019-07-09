@@ -36,15 +36,14 @@
                     allowCredentials: [{
                         id: base64url.decode(publicKeyCredentialId, { loose: true }),
                         type: 'public-key',
-                        transports: ['usb', 'ble', 'nfc', 'internal'],
                     }],
-                    timeout : 60000,
+                    userVerification : "preferred",
                 };
             } else {
                 publicKey = {
                     challenge: base64url.decode(challenge, { loose: true }),
                     rpId: rpId,
-                    timeout : 60000,
+                    userVerification : "preferred",
                 };
             };
             console.log(publicKey);

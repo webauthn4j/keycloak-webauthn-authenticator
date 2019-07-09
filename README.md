@@ -115,11 +115,29 @@ To enable users having their accounts on keycloak to authenticate themselves on 
 | Identity Provider Redirector |     | ALTERNATIVE |
 | WebAuthn Authenticator       |     | REQUIRED    |
 
-### Notes
+## Notes
+
+### User Registration in Authentication with Resident Key supported Authenticator Scenario
 
 Browser Flow (Use `Resident Key`) automatically asks users to authenticate on their authenticators. Therefore, the users without their accounts have no chance to register them on this flow.
 
 For such the users to register their accounts, please use the default Browser Flow. It is helpful to user `Authentication Flow Overrides` on Client Settings. You can set the default Browser Flow for User Accont Service (Client ID: account) to let users register their accounts at first.
+
+### Requiring Resident Key in Registration
+
+On registration, the browser asks you if you would like to store ID and its credential on your authenticator(namely, Resident Key). If you push OK button, the browser tell your authenticator to do so explicitly. If not ,whether ID and its credential is Resident Key or not depends on authenticators.
+
+Please note the followings:
+
+
+- In Authentication with Resident Key supported Authenticator Scenario, only user's ID and its credential as Resident Key can be valid. Therefore, if you register ID and its credential that is not as Resident Key and try to authenticate with them, you fail to authenticate.
+
+
+- Not all authenticators are capable of this Resident Key. The Authenticator lack of Resident Key capability fails to register user's ID and its credential when Resident Key is required explicitly.
+
+
+- Not all browsers support this Resident Key. At least, I've confirmed that Microsoft Edge (ver.44) supports Resident Key.
+
 
 ## TODO
 
