@@ -44,6 +44,14 @@ We've confirmed that this demo had worked well under the following environments:
   - Authenticator : Internal Fingerprint Authentication Device
   - Server(RP) : keycloak-5.0.0 on localhost
 
+- Authentication with Resident Key supported Authenticator Scenario
+
+  - OS : Windows 10
+  - Browser : Microsoft Edge (ver 44)
+  - Authenticator : Yubico Security Key
+  - Server(RP) : keycloak-5.0.0 on localhost
+
+
 ## Install
 
 - Build:
