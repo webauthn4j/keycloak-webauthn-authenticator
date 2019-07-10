@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.keycloak.authenticator;
+package org.keycloak.authentication.authenticators.browser;
 
 import org.keycloak.Config;
 import org.keycloak.authentication.Authenticator;

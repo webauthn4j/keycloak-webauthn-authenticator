@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.keycloak.authenticator;
+package org.keycloak.authentication.authenticators.browser;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ import org.keycloak.WebAuthnConstants;
 import org.keycloak.authentication.AuthenticationFlowContext;
 import org.keycloak.authentication.AuthenticationFlowError;
 import org.keycloak.authentication.AuthenticationFlowException;
+import org.keycloak.authentication.authenticators.browser.WebAuthn4jAuthenticator;
 import org.keycloak.common.util.Base64Url;
 import org.keycloak.credential.CredentialInput;
 import org.keycloak.models.KeycloakSession;

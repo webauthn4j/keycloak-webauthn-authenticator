@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.keycloak.authenticator;
+package org.keycloak.authentication.authenticators.browser;
 
 import com.webauthn4j.data.WebAuthnAuthenticationContext;
 import com.webauthn4j.data.client.Origin;

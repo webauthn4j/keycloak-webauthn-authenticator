@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package org.keycloak.authenticator;
+package org.keycloak.authentication.authenticators.browser;
 
+import org.keycloak.authentication.authenticators.browser.WebAuthn4jAuthenticatorFactory;
 import org.keycloak.models.AuthenticationExecutionModel;
 import org.keycloak.models.KeycloakSession;
 
