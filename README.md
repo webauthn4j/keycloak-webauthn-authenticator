@@ -5,6 +5,19 @@
 
 [Web Authentication](https://www.w3.org/TR/webauthn/)(WebAuthn) sample plugin for [Keycloak](https://www.keycloak.org) , implements with [webauthn4j](https://github.com/webauthn4j/webauthn4j).
 
+This sample plugin is developed in order to implement features defined in [the design document for WebAuthn support onto keycloak](https://github.com/keycloak/keycloak-community/blob/master/design/web-authn-authenticator.md), clarify issues for realizing these features and give feedback onto this design document.
+
+
+## Important Notice
+
+If you use the previous commits or versions, please first undeploy it, and after that, deploy the ear of the current version or commit.
+
+  - `$ mvn wildfly:undeploy`
+  
+  - `$ mvn clean install wildfly:deploy`
+
+If not undeploy the existing ear, an error occurs. This is because the current version removed RegisterAuthenticator implemented as Authenticator considering [the issue](https://github.com/webauthn4j/keycloak-webauthn-authenticator/issues/17).
+
 ## Environment
 
 We've confirmed that this demo had worked well under the following environments:

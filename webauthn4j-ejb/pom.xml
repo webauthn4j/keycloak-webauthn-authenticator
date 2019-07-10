@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.webauthn4j</groupId>
         <artifactId>keycloak-webauthn</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.3.RELEASE</version>
     </parent>
 
     <groupId>com.webauthn4j</groupId>
