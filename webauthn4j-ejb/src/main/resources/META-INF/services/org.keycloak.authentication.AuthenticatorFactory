@@ -1,2 +1,1 @@
 org.keycloak.authenticator.WebAuthn4jAuthenticatorFactory
-org.keycloak.authenticator.RegisterAuthenticatorFactory
