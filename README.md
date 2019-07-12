@@ -90,11 +90,11 @@ This prototype consists of two components:
 
 - WebAuthn Register
 
-This enable users to register their accounts on keycloak with their authenticators' generating public key credentials. It is implemented as `Required Action`.
+This enables users to register their accounts on keycloak with their authenticators' generating public key credentials. It is implemented as `Required Action`.
 
 - WebAuthn Authenticator
 
-This enable users to authenticate themselves on keycloak by their authenticators. It is implemented as `Authenticaor`.
+This enable users to authenticate themselves on keycloak by their authenticators. It is implemented as `Authenticator`.
 
 ## Realm Settings
 
@@ -146,7 +146,7 @@ For such the users to register their accounts, please use the default Browser Fl
 
 ### Requiring Resident Key in Registration
 
-On registration, the browser asks you if you would like to store ID and its credential on your authenticator(namely, Resident Key). If you push OK button, the browser tell your authenticator to do so explicitly. If not ,whether ID and its credential is Resident Key or not depends on authenticators.
+On registration, the browser asks you if you would like to store ID and its credential on your authenticator(namely, Resident Key). If you push OK button, the browser tells your authenticator to do so explicitly. If not, whether ID and its credential is Resident Key or not depends on authenticators.
 
 Please note the followings:
 
