@@ -94,7 +94,7 @@ This enables users to register their accounts on keycloak with their authenticat
 
 - WebAuthn Authenticator
 
-This enable users to authenticate themselves on keycloak by their authenticators. It is implemented as `Authenticator`.
+This enables users to authenticate themselves on keycloak by their authenticators. It is implemented as `Authenticator`.
 
 ## Realm Settings
 
