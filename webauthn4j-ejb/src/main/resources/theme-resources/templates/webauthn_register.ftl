@@ -20,7 +20,7 @@
         var userid = "${userid}";
         var username = "${username}";
         var origin = "${origin}";
-        var requireResidentKey = window.confirm("If you wish to store your ID and its credential in your authenticator, push OK button.\n NOTECE: Not all authenticator can do that. Please make sure whether your autheticator has its capability.");
+        var requireResidentKey = window.confirm("If you wish to store your ID and its credential in your authenticator, push OK button.\n NOTICE: Not all authenticators can do that. Please make sure whether your authenticator has this capability.");
         var publicKey = {
             challenge: base64url.decode(challenge, { loose: true }),
             rp: {
