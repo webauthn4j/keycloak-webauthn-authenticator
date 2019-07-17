@@ -24,16 +24,16 @@ We've confirmed that this demo had worked well under the following environments:
 
 - 2 Factor Authentication with Resident Key Not supported Authenticator Scenario
 
-  - OS : Windows 10
-  - Browser : Google Chrome (ver 73), Mozilla FireFox (ver 66)
-  - Authenticator : Yubico Security Key
-  - Server(RP) : keycloak-5.0.0 on localhost
+  - OS : Windows 10 (v1903)
+  - Browser : Google Chrome (ver 73), Mozilla FireFox (ver 66, 68)
+  - Authenticator : Yubico Security Key NFC (5.1.2), Yubikey 5C Nano
+  - Server(RP) : keycloak-5.0.0, 6.0.1 on localhost
 
 - 2 Factor Authentication with Resident Key Not supported Authenticator Scenario
 
   - OS : macOS Mojave (ver 10.14.3)
   - Browser : Google Chrome (ver 73), Mozilla FireFox (ver 66)
-  - Authenticator : Yubico Security Key
+  - Authenticator : Yubico Security Key NFC (5.1.2)
   - Server(RP) : keycloak-5.0.0 on localhost
 
 - 2 Factor Authentication with Resident Key supported Authenticator Scenario
@@ -61,7 +61,7 @@ We've confirmed that this demo had worked well under the following environments:
 
   - OS : Windows 10
   - Browser : Microsoft Edge (ver 44)
-  - Authenticator : Yubico Security Key
+  - Authenticator : Yubico Security Key NFC (5.1.2)
   - Server(RP) : keycloak-5.0.0 on localhost
 
 
