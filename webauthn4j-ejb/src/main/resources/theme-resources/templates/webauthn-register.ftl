@@ -11,6 +11,7 @@
         <input type="hidden" id="clientDataJSON" name="clientDataJSON"/>
         <input type="hidden" id="attestationObject" name="attestationObject"/>
         <input type="hidden" id="publicKeyCredentialId" name="publicKeyCredentialId"/>
+        <input type="hidden" id="authenticatorLabel" name="authenticatorLabel"/>
         <input type="hidden" id="error" name="error"/>
     </form>
     <script type="text/javascript" src="${url.resourcesPath}/node_modules/jquery/dist/jquery.min.js"></script>
@@ -59,6 +60,12 @@
                 $("#clientDataJSON").val(base64url.encode(new Uint8Array(clientDataJSON), { pad: false }));
                 $("#attestationObject").val(base64url.encode(new Uint8Array(attestationObject), { pad: false }));
                 $("#publicKeyCredentialId").val(base64url.encode(new Uint8Array(publicKeyCredentialId), { pad: false }));
+
+                var initLabel = "WebAuthn Authenticator (Default Label)";
+                var labelResult = window.prompt("Please input your registered authenticator's label", initLabel);
+                if (labelResult === null) labelResult = initLabel;
+                $("#authenticatorLabel").val(labelResult);
+
                 $("#register").submit();
 
             })

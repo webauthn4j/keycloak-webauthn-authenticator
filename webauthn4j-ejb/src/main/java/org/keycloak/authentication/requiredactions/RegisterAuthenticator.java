@@ -72,7 +72,7 @@ public class RegisterAuthenticator implements RequiredActionProvider {
                 .setAttribute(WebAuthnConstants.CHALLENGE, challengeValue)
                 .setAttribute(WebAuthnConstants.USER_ID, userid)
                 .setAttribute(WebAuthnConstants.USER_NAME, username)
-                .createForm("webauthn_register.ftl");
+                .createForm("webauthn-register.ftl");
         context.challenge(form);
     }
 
@@ -89,12 +89,10 @@ public class RegisterAuthenticator implements RequiredActionProvider {
 
         String baseUrl = UriUtils.getOrigin(context.getUriInfo().getBaseUri());
         String rpId = context.getUriInfo().getBaseUri().getHost();
+        String label = params.getFirst(WebAuthnConstants.AUTHENTICATOR_LABEL);
         byte[] clientDataJSON = Base64.getUrlDecoder().decode(params.getFirst(WebAuthnConstants.CLIENT_DATA_JSON));
         byte[] attestationObject = Base64.getUrlDecoder().decode(params.getFirst(WebAuthnConstants.ATTESTATION_OBJECT));
         String publicKeyCredentialId = params.getFirst(WebAuthnConstants.PUBLIC_KEY_CREDENTIAL_ID);
-        // store received Credential ID on Registration onto UserModel in order to be used on Authentication
-        context.getUser().setSingleAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR, publicKeyCredentialId);
-        logger.debugv("publicKeyCredentialId = {0}", context.getUser().getAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR).get(0));
 
         Origin origin = new Origin(baseUrl);
         Challenge challenge = new DefaultChallenge(context.getAuthenticationSession().getAuthNote(WebAuthnConstants.AUTH_CHALLENGE_NOTE));
@@ -112,6 +110,15 @@ public class RegisterAuthenticator implements RequiredActionProvider {
             credential.setCount(response.getAttestationObject().getAuthenticatorData().getSignCount());
 
             this.session.userCredentialManager().updateCredential(context.getRealm(), context.getUser(), credential);
+
+            // store received Credential ID on Registration onto UserModel in order to be used on Authentication
+            context.getUser().setSingleAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR, publicKeyCredentialId);
+            context.getUser().setSingleAttribute(WebAuthnConstants.PUBKEY_CRED_LABEL_ATTR, label);
+            context.getUser().setSingleAttribute(WebAuthnConstants.PUBKEY_CRED_AAGUID_ATTR, response.getAttestationObject().getAuthenticatorData().getAttestedCredentialData().getAaguid().toString());
+            logger.infov("publicKeyCredentialId = {0}", context.getUser().getAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR));
+            logger.infov("publicKeyCredentialLabel = {0}", context.getUser().getAttribute(WebAuthnConstants.PUBKEY_CRED_LABEL_ATTR));
+            logger.infov("publicKeyCredentialAAGUID = {0}", context.getUser().getAttribute(WebAuthnConstants.PUBKEY_CRED_AAGUID_ATTR));
+
             context.success();
         } catch (Exception me) {
             me.printStackTrace();
