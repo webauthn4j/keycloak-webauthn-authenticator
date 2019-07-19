@@ -13,7 +13,7 @@ This sample plugin is developed in order to implement features defined in [the d
 If you use the previous commits or versions, please first undeploy it, and after that, deploy the ear of the current version or commit.
 
   - `$ mvn wildfly:undeploy`
-  
+
   - `$ mvn clean install wildfly:deploy`
 
 If not undeploy the existing ear, an error occurs. This is because the current version removed RegisterAuthenticator implemented as Authenticator considering [the issue](https://github.com/webauthn4j/keycloak-webauthn-authenticator/issues/17).
@@ -135,6 +135,51 @@ To enable users having their accounts on keycloak to authenticate themselves on 
 | Kerberos                     |     | DISABLED    |
 | Identity Provider Redirector |     | ALTERNATIVE |
 | WebAuthn Authenticator       |     | REQUIRED    |
+
+
+## Authenticator Management
+
+The user can only register their own authenticator. The user and the administrator can manage the registered authenticator. For the user to do so, the administrator set `Realm Settings -> Themes -> Account Theme` to "webauthn".
+
+### User Editable Label for Registered Authenticator
+
+As the metadata of the authenticator, the user can put the editable label onto their authenticator to identify it when registering it.
+
+The user and the administrator can edit this label. 
+
+If the user wants to edit this label, please access to [User Account Service](https://www.keycloak.org/docs/latest/server_admin/index.html#_account-service) and edit `Public Key Credential Label`.
+
+If the administrator wants to edit some user's registered authenticator's label, please access to `Users -> (User Name) -> Attributes` and edit `public_key_credential_label`.
+
+
+### AAGUID for Registered Authenticator
+
+As the metadata of the authenticator, its AAGUID is stored onto keycloak when registering it.
+
+The user and the administrator can view this AAGUID.
+
+If the user wants to view this AAGUID, please access to [User Account Service](https://www.keycloak.org/docs/latest/server_admin/index.html#_account-service) and look up `Public Key Credential AAGUID`.
+
+If the administrator wants to view some user's registered authenticator's label, please access to `Users -> (User Name) -> Attributes` and look up `public_key_credential_aaguid`.
+
+
+### Delete Registered Authenticator
+
+The user and the administrator can delete the registered authenticator.
+
+If the user wants to delete its own regestered authenticator, please access to [User Account Service](https://www.keycloak.org/docs/latest/server_admin/index.html#_account-service) and clean up `Public Key Credential ID`, `Public Key Credential Label` and `Public Key Credential AAGUID`.
+
+If the administrator wants to delete some user's registered authenticator, please access to `Users -> (User Name) -> Attributes` and delete `public_key_credential_id`, `public_key_credential_label` and `public_key_credential_aaguid`.
+
+
+## Re-Register Authenticator
+
+The user can re-register the authenticator. 
+
+- The administrator goes to `Users -> (User Name) -> Details` and add `WebAuthn Register` as `Required User Actions`.
+
+- The user logs onto keycoak. After authentication in the login form, keycloak asks them to register ther authenticator.
+
 
 ## Notes
 
