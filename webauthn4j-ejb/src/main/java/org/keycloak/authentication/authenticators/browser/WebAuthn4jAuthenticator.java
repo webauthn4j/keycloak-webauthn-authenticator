@@ -32,6 +32,7 @@ import org.keycloak.common.util.Base64Url;
 import org.keycloak.common.util.UriUtils;
 import org.keycloak.credential.WebAuthnCredentialModel;
 import org.keycloak.forms.login.LoginFormsProvider;
+import org.keycloak.forms.login.freemarker.model.WebAuthnAuthenticatorsBean;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.RealmModel;
 import org.keycloak.models.UserModel;
@@ -39,6 +40,7 @@ import org.keycloak.services.Urls;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +61,6 @@ public class WebAuthn4jAuthenticator implements Authenticator {
         params.put(WebAuthnConstants.CHALLENGE, Base64Url.encode(challenge.getValue()));
         params.put(WebAuthnConstants.RPID, baseUri.getHost());
         params.put(WebAuthnConstants.ORIGIN, UriUtils.getOrigin(baseUri));
-        params.put("settingsPath", Urls.realmBase(baseUri).path(realm.getName()).path("webauthn-settings").path("register").build().toString());
         return params;
     }
 
@@ -68,22 +69,16 @@ public class WebAuthn4jAuthenticator implements Authenticator {
         Map<String, String> params = generateParameters(context.getRealm(), context.getUriInfo().getBaseUri());
         context.getAuthenticationSession().setAuthNote(WebAuthnConstants.AUTH_CHALLENGE_NOTE, params.get(WebAuthnConstants.CHALLENGE));
         UserModel user = context.getUser();
-        String publicKeyCredentialId = ""; // NOTE : informs FreeMarker template of no need allowCredentials
+        boolean isUserIdentified = false;
         if (user != null) {
-            // in 2 Factor Scenario
-            List<String> publicKeyCredentialIds = user.getAttribute(WebAuthnConstants.PUBKEY_CRED_ID_ATTR);
-            if (publicKeyCredentialIds == null || publicKeyCredentialIds.isEmpty()) {
-                throw new AuthenticationFlowException("public key credential id is not registerd.", AuthenticationFlowError.CREDENTIAL_SETUP_REQUIRED);
-            } else if (publicKeyCredentialIds.size() > 1) {
-                throw new AuthenticationFlowException("multiple public key credential ids are registerd.", AuthenticationFlowError.CREDENTIAL_SETUP_REQUIRED);
-            }
-            publicKeyCredentialId = publicKeyCredentialIds.get(0);
-            logger.debugv("publicKeyCredentialId = {0}", publicKeyCredentialId);
+            // in 2 Factor Scenario where the user has already identified
+            isUserIdentified = true;
+            form.setAttribute("authenticators", new WebAuthnAuthenticatorsBean(user));
         } else {
-            // in Passwordless Scenario
+            // in ID-less & Password-less Scenario
             // NOP
         }
-        params.put(WebAuthnConstants.PUBLIC_KEY_CREDENTIAL_ID, publicKeyCredentialId);
+        params.put("isUserIdentified", Boolean.toString(isUserIdentified));
         params.forEach(form::setAttribute);
         context.challenge(form.createForm("webauthn.ftl"));
     }
