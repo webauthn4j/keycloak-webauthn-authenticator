@@ -5,6 +5,8 @@
 
 [Web Authentication](https://www.w3.org/TR/webauthn/)(WebAuthn) sample plugin for [Keycloak](https://www.keycloak.org) , implements with [webauthn4j](https://github.com/webauthn4j/webauthn4j).
 
+The webauthn's support based on this repository has been merged into keycloak master and released in [keycloak-8.0.0](https://www.keycloak.org/2019/11/keycloak-800-released.html). Therefore, this project will not be maintained basically and can not work on keycloak-8.0.0 and later version.
+
 This sample plugin is developed in order to implement features defined in [the design document for WebAuthn support onto keycloak](https://github.com/keycloak/keycloak-community/blob/master/design/web-authn-authenticator.md), clarify issues for realizing these features and give feedback onto this design document.
 
 
